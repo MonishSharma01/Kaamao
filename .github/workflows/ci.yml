@@ -93,7 +93,6 @@ jobs:
           fetch-depth: 0 # fetch all history for scanning
 
       - name: GitGuardian Scan
-        if: ${{ secrets.GITGUARDIAN_API_KEY != '' }}
         uses: GitGuardian/ggshield-action@v1
         continue-on-error: true
         env:
