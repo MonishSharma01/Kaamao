@@ -1,4 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
 const supabaseUrl =
   process.env.NEXT_PUBLIC_SUPABASE_URL || "https://placeholder.supabase.co";
@@ -20,9 +20,11 @@ if (
   );
 }
 
-// Client initialization
-const globalForSupabase = globalThis as unknown as { supabaseClient: any };
-let supabaseClient = globalForSupabase.supabaseClient || null;
+// Client initialization with proper typing
+const globalForSupabase = globalThis as unknown as {
+  supabaseClient: SupabaseClient | null;
+};
+let supabaseClient: SupabaseClient | null = globalForSupabase.supabaseClient || null;
 
 if (!supabaseClient) {
   try {
@@ -71,56 +73,156 @@ export interface UserSubmission {
   dob: string;
 }
 
-// ==================== USER AUTHENTICATION ====================
-
-// USE THIS FUNCTION FOR SIGNUP - Bypasses rate limits via API route
-export async function signupWithAPI(userData: UserRegistrationData) {
-  try {
-    const response = await fetch("/api/auth/signup", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email: userData.email,
-        password: userData.password,
-        fullName: userData.fullName,
-        phoneNo: userData.phoneNo,
-        dob: userData.dob,
-        locationCity: userData.locationCity,
-        neighborhood: userData.neighborhood,
-        pincode: userData.pincode,
-      }),
-    });
-
-    const result = await response.json();
-
-    if (response.ok && result.success) {
-      return {
-        success: true,
-        message: result.message,
-      };
-    } else {
-      return {
-        success: false,
-        error: result.error || "Signup failed",
-      };
-    }
-  } catch (err) {
-    console.error("Signup API error:", err);
-    return {
-      success: false,
-      error: "Network error. Please try again.",
-    };
-  }
+export interface SignUpResponse {
+  success: boolean;
+  error?: string;
+  rateLimited?: boolean;
+  message?: string;
+  warning?: string;
+  user?: unknown;
+  session?: unknown;
 }
 
-// For login (still uses direct Supabase client)
-export async function signIn(credentials: UserLoginData) {
+export interface SignInResponse {
+  success: boolean;
+  error?: string;
+  session?: unknown;
+  user?: unknown;
+}
+
+// Rate limiting storage
+const signupAttempts = new Map<string, number[]>();
+
+function checkRateLimit(email: string): { allowed: boolean; waitTime: number } {
+  const now = Date.now();
+  const attempts = signupAttempts.get(email) || [];
+  const recentAttempts = attempts.filter((time) => now - time < 600000);
+
+  if (recentAttempts.length >= 3) {
+    const oldestAttempt = Math.min(...recentAttempts);
+    const waitTime = 600000 - (now - oldestAttempt);
+    return { allowed: false, waitTime: Math.ceil(waitTime / 1000) };
+  }
+
+  recentAttempts.push(now);
+  signupAttempts.set(email, recentAttempts);
+  return { allowed: true, waitTime: 0 };
+}
+
+// ==================== USER AUTHENTICATION ====================
+
+export async function signUp(
+  userData: UserRegistrationData,
+): Promise<SignUpResponse> {
   if (!isSupabaseConfigured || !supabaseClient) {
     return {
       success: false,
-      error: "Supabase is not configured. Please check your environment variables.",
+      error:
+        "Supabase is not configured. Please check your environment variables.",
+    };
+  }
+
+  const rateLimit = checkRateLimit(userData.email);
+  if (!rateLimit.allowed) {
+    return {
+      success: false,
+      error: `Too many signup attempts. Please wait ${rateLimit.waitTime} seconds before trying again.`,
+      rateLimited: true,
+    };
+  }
+
+  try {
+    const { data: authData, error: authError } =
+      await supabaseClient.auth.signUp({
+        email: userData.email,
+        password: userData.password,
+        options: {
+          data: {
+            full_name: userData.fullName,
+            phone_no: userData.phoneNo,
+          },
+        },
+      });
+
+    if (authError) {
+      console.error("Auth signup error:", authError);
+
+      if (authError.message.includes("rate limit")) {
+        return {
+          success: false,
+          error:
+            "Too many signup attempts. Please wait 10 minutes before trying again.",
+          rateLimited: true,
+        };
+      }
+
+      if (authError.message.includes("User already registered")) {
+        return {
+          success: false,
+          error: "This email is already registered. Please login instead.",
+        };
+      }
+
+      return {
+        success: false,
+        error: authError.message,
+      };
+    }
+
+    if (!authData.user) {
+      return {
+        success: false,
+        error: "Failed to create user account",
+      };
+    }
+
+    const userId = authData.user.id;
+
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const { error: profileError } = await supabaseClient.from("users").insert({
+      id: userId,
+      full_name: userData.fullName,
+      email: userData.email,
+      phone_no: userData.phoneNo,
+      dob: userData.dob,
+      location_city: userData.locationCity,
+      neighborhood: userData.neighborhood || null,
+      pincode: userData.pincode,
+      created_at: new Date().toISOString(),
+    });
+
+    if (profileError) {
+      console.error("Profile insert error:", profileError);
+      return {
+        success: false,
+        error:
+          "Account created but profile setup failed. Please contact support.",
+      };
+    }
+
+    console.log("User registered successfully:", userId);
+
+    return {
+      success: true,
+      user: authData.user,
+      session: authData.session,
+    };
+  } catch (err) {
+    console.error("Signup exception:", err);
+    const message = err instanceof Error ? err.message : "Signup failed";
+    return { success: false, error: message };
+  }
+}
+
+export async function signIn(
+  credentials: UserLoginData,
+): Promise<SignInResponse> {
+  if (!isSupabaseConfigured || !supabaseClient) {
+    return {
+      success: false,
+      error:
+        "Supabase is not configured. Please check your environment variables.",
     };
   }
 
@@ -132,21 +234,21 @@ export async function signIn(credentials: UserLoginData) {
 
     if (error) {
       console.error("Login error:", error);
-      
+
       if (error.message.includes("Invalid login credentials")) {
         return {
           success: false,
           error: "Invalid email or password",
         };
       }
-      
+
       if (error.message.includes("Email not confirmed")) {
         return {
           success: false,
           error: "Please confirm your email before logging in",
         };
       }
-      
+
       return {
         success: false,
         error: error.message,
@@ -165,7 +267,7 @@ export async function signIn(credentials: UserLoginData) {
   }
 }
 
-export async function signOut() {
+export async function signOut(): Promise<{ success: boolean; error?: string }> {
   if (!isSupabaseConfigured || !supabaseClient) {
     return { success: false, error: "Supabase not configured" };
   }
@@ -182,7 +284,10 @@ export async function signOut() {
   }
 }
 
-export async function getCurrentUser() {
+export async function getCurrentUser(): Promise<{
+  user: unknown | null;
+  session: unknown | null;
+}> {
   if (!isSupabaseConfigured || !supabaseClient) {
     return { user: null, session: null };
   }
@@ -200,9 +305,17 @@ export async function getCurrentUser() {
   }
 }
 
-export async function getUserProfile(userId: string) {
+export async function getUserProfile(userId: string): Promise<{
+  success: boolean;
+  error?: string;
+  profile: UserProfile | null;
+}> {
   if (!isSupabaseConfigured || !supabaseClient) {
-    return { success: false, error: "Supabase not configured", profile: null };
+    return {
+      success: false,
+      error: "Supabase not configured",
+      profile: null,
+    };
   }
 
   try {
@@ -217,10 +330,14 @@ export async function getUserProfile(userId: string) {
       return { success: false, error: error.message, profile: null };
     }
 
-    return { success: true, profile: data as UserProfile, error: null };
+    return { success: true, profile: data as UserProfile, error: undefined };
   } catch (err) {
     console.error("Get profile exception:", err);
-    return { success: false, error: "Failed to fetch profile", profile: null };
+    return {
+      success: false,
+      error: "Failed to fetch profile",
+      profile: null,
+    };
   }
 }
 
@@ -410,6 +527,52 @@ export async function getInterestCount(projectId: string): Promise<number> {
   }
 }
 
+// ==================== API-BASED SIGNUP (Bypasses Rate Limits) ====================
+
+export async function signupWithAPI(
+  userData: UserRegistrationData,
+): Promise<SignUpResponse> {
+  try {
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: userData.email,
+        password: userData.password,
+        fullName: userData.fullName,
+        phoneNo: userData.phoneNo,
+        dob: userData.dob,
+        locationCity: userData.locationCity,
+        neighborhood: userData.neighborhood,
+        pincode: userData.pincode,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok && result.success) {
+      return {
+        success: true,
+        message: result.message,
+      };
+    } else {
+      return {
+        success: false,
+        error: result.error || "Signup failed",
+      };
+    }
+  } catch (err) {
+    console.error("Signup API error:", err);
+    const errorMessage = err instanceof Error ? err.message : "Network error. Please try again.";
+    return {
+      success: false,
+      error: errorMessage,
+    };
+  }
+}
+
 // ==================== EXPORTS ====================
 
 export const supabase = supabaseClient;
@@ -419,7 +582,10 @@ export async function isAuthenticated(): Promise<boolean> {
   return !!session;
 }
 
-export async function getUserMetadata() {
+export async function getUserMetadata(): Promise<unknown | null> {
   const { user } = await getCurrentUser();
-  return user?.user_metadata || null;
+  if (user && typeof user === "object" && "user_metadata" in user) {
+    return (user as { user_metadata: unknown }).user_metadata;
+  }
+  return null;
 }

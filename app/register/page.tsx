@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { signupWithAPI } from "@/lib/supabase";
 
 type Step1Data = {
   fullName: string;
@@ -178,19 +177,26 @@ export default function RegisterPage() {
     setIsLoading(true);
 
     try {
-      const result = await signupWithAPI({
-        fullName: step1Data.fullName,
-        email: step1Data.email,
-        phoneNo: step1Data.phoneNo,
-        password: step1Data.password,
-        dob: step2Data.dob,
-        locationCity: step2Data.locationCity,
-        neighborhood: step2Data.neighborhood,
-        pincode: step2Data.pincode,
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: step1Data.email,
+          password: step1Data.password,
+          fullName: step1Data.fullName,
+          phoneNo: step1Data.phoneNo,
+          dob: step2Data.dob,
+          locationCity: step2Data.locationCity,
+          neighborhood: step2Data.neighborhood,
+          pincode: step2Data.pincode,
+        }),
       });
 
-      if (result.success) {
-        console.log("Registration successful!");
+      const result = await response.json();
+
+      if (response.ok && result.success) {
         router.push("/login?registered=true");
       } else {
         if (result.error?.toLowerCase().includes("already registered")) {
@@ -199,9 +205,8 @@ export default function RegisterPage() {
           setError(result.error || "Signup failed. Please try again.");
         }
       }
-    } catch (err: any) {
-      console.error("Registration error:", err);
-      setError(err.message || "An unexpected error occurred. Please try again.");
+    } catch {
+      setError("An unexpected error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -212,7 +217,7 @@ export default function RegisterPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
-        {/* Left Side - Blue Theme Panel */}
+        {/* Left Side */}
         <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden p-8 md:p-10 flex flex-col justify-between min-h-[300px] md:min-h-[550px]">
           <div className="absolute inset-0 overflow-hidden">
             <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" />
@@ -228,7 +233,7 @@ export default function RegisterPage() {
           </div>
 
           <div className="absolute bottom-6 left-6 flex gap-1.5 opacity-25">
-            {[...Array(15)].map((_, i) => (
+            {Array.from({ length: 15 }).map((_, i) => (
               <div
                 key={i}
                 className="w-1 h-1 bg-white rounded-full animate-[dotPop_2s_ease-in-out_infinite]"
@@ -272,10 +277,9 @@ export default function RegisterPage() {
           </div>
         </div>
 
-        {/* Right Side - Registration Form */}
+        {/* Right Side */}
         <div className="w-full md:w-1/2 p-6 md:p-8 bg-white overflow-y-auto max-h-[90vh]">
           <div className="h-full flex flex-col">
-            {/* Header */}
             <div className="text-center mb-4">
               <h2 className="text-2xl font-bold text-gray-800">Sign Up</h2>
               <p className="text-gray-500 text-sm mt-1">
@@ -348,14 +352,12 @@ export default function RegisterPage() {
               </div>
             </div>
 
-            {/* Error Message */}
             {error && (
               <div className="mb-3 bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs text-center">
                 {error}
               </div>
             )}
 
-            {/* Step Content */}
             <div
               className={`transition-all duration-300 ${
                 isTransitioning
@@ -363,7 +365,6 @@ export default function RegisterPage() {
                   : "opacity-100 transform translate-x-0"
               }`}
             >
-              {/* Step 1 - Account Info */}
               {step === 1 && (
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-3">
@@ -540,7 +541,6 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* Step 2 - Location */}
               {step === 2 && (
                 <div className="space-y-3">
                   <div>
@@ -617,7 +617,6 @@ export default function RegisterPage() {
                 </div>
               )}
 
-              {/* Step 3 - Review & Complete */}
               {step === 3 && (
                 <form onSubmit={handleSubmit} className="space-y-3">
                   <div className="bg-gray-50 rounded-lg p-3 space-y-1">
@@ -690,7 +689,6 @@ export default function RegisterPage() {
               )}
             </div>
 
-            {/* Footer Links */}
             {step === 1 && (
               <div className="text-center mt-4 pt-3 border-t border-gray-100">
                 <p className="text-xs text-gray-600">
@@ -705,7 +703,6 @@ export default function RegisterPage() {
               </div>
             )}
 
-            {/* Copyright */}
             <div className="text-center mt-4 pt-3 border-t border-gray-100">
               <p className="text-xs text-gray-400">
                 © 2026 Kaamao Connect. All rights reserved.
