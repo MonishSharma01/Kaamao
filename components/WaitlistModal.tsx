@@ -11,9 +11,13 @@ interface WaitlistModalProps {
   projectName: string;
 }
 
-const trackEvent = (eventName: string, params?: Record<string, any>) => {
-  if (typeof window !== "undefined" && (window as any).gtag) {
-    (window as any).gtag("event", eventName, params);
+const trackEvent = (eventName: string, params?: Record<string, unknown>) => {
+  const globalWindow =
+    typeof window !== "undefined"
+      ? (window as unknown as { gtag?: (...args: unknown[]) => void })
+      : undefined;
+  if (globalWindow?.gtag) {
+    globalWindow.gtag("event", eventName, params);
   }
 };
 
@@ -212,7 +216,9 @@ export default function WaitlistModal({
               </p>
               <button
                 onClick={() => {
-                  trackEvent("success_close_click", { project_name: projectName });
+                  trackEvent("success_close_click", {
+                    project_name: projectName,
+                  });
                   handleClose();
                 }}
                 className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-purple-500 to-indigo-600 hover:from-purple-600 hover:to-indigo-700 text-white font-semibold transition-all duration-300 shadow-lg shadow-purple-500/20 active:scale-[0.98]"
@@ -317,8 +323,13 @@ export default function WaitlistModal({
                       <button
                         type="button"
                         onClick={() => {
-                          trackEvent("gender_button_click", { gender: "Female" });
-                          setFormData((prev) => ({ ...prev, gender: "Female" }));
+                          trackEvent("gender_button_click", {
+                            gender: "Female",
+                          });
+                          setFormData((prev) => ({
+                            ...prev,
+                            gender: "Female",
+                          }));
                         }}
                         className={`py-3 px-4 rounded-2xl border text-sm font-semibold transition-all duration-150 cursor-pointer flex items-center justify-center ${
                           formData.gender === "Female"

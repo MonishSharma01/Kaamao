@@ -15,7 +15,7 @@ export default function Home() {
   const initialRefreshDone = useRef(false);
 
   const activeProjectId = "D001"; // yeh sab remove krdo
-  const activeProjectName = "Kaamao"; // supabase connection bhi remove kro abhi ke liye 
+  const activeProjectName = "Kaamao"; // supabase connection bhi remove kro abhi ke liye
 
   const refreshCounts = useCallback(async () => {
     try {
@@ -78,8 +78,12 @@ export default function Home() {
   const handleCtaClick = useCallback(
     async (ctaLabel: string) => {
       setIsModalOpen(true);
-      if (typeof window !== "undefined" && (window as any).gtag) {
-        (window as any).gtag("event", "cta_button_click", {
+      const globalWindow =
+        typeof window !== "undefined"
+          ? (window as unknown as { gtag?: (...args: unknown[]) => void })
+          : undefined;
+      if (globalWindow?.gtag) {
+        globalWindow.gtag("event", "cta_button_click", {
           button_name: ctaLabel,
           project_id: activeProjectId,
         });

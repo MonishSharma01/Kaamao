@@ -26,6 +26,7 @@ Kaamao Connect bridges this gap by creating a trusted platform for local-based s
 ## 🎯 Target Users
 
 ### Service Providers
+
 - Homemakers
 - Students
 - Tutors
@@ -35,6 +36,7 @@ Kaamao Connect bridges this gap by creating a trusted platform for local-based s
 - Skilled workers
 
 ### Customers
+
 - Families seeking local services
 - Students needing tutors
 - Individuals looking for trusted nearby help
