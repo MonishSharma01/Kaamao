@@ -1,5 +1,5 @@
 "use client";
-
+// HOME PAGE SAB REMOVE KR DO
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import { getInterestCount, logClick } from "../lib/supabase";
@@ -14,8 +14,8 @@ export default function Home() {
   const themeInitialized = useRef(false);
   const initialRefreshDone = useRef(false);
 
-  const activeProjectId = "D001";
-  const activeProjectName = "Kaamao";
+  const activeProjectId = "D001"; // yeh sab remove krdo
+  const activeProjectName = "Kaamao"; // supabase connection bhi remove kro abhi ke liye 
 
   const refreshCounts = useCallback(async () => {
     try {
