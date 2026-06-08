@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Briefcase,
@@ -14,6 +15,8 @@ import {
   Plus,
 } from "lucide-react";
 import Image from "next/image";
+import { getCurrentUser, getUserProfile } from "@/lib/supabase";
+import type { UserProfile as SupabaseUserProfile } from "@/lib/supabase";
 
 // --- Types ---
 type MenuItem = {
@@ -173,8 +176,60 @@ const FloatingActionButton: React.FC<{ onClick: () => void }> = ({
 
 // --- Main App Component ---
 export default function Home() {
+  const router = useRouter();
   const [currentPage, setCurrentPage] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [userProfile, setUserProfile] = useState<SupabaseUserProfile | null>(null);
+  const [userInitials, setUserInitials] = useState<string>("AM");
+
+  // Get initials from user name
+  const getInitials = (name: string): string => {
+    return name
+      .split(" ")
+      .map((part) => part[0])
+      .join("")
+      .toUpperCase()
+      .slice(0, 2);
+  };
+
+  // Fetch current user profile on component mount
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const { user } = await getCurrentUser();
+        if (!user) {
+          console.error("No authenticated user found");
+          return;
+        }
+
+        const userId = (user as { id?: string })?.id;
+        if (!userId) {
+          console.error("User ID not available");
+          return;
+        }
+
+        const result = await getUserProfile(userId);
+        if (result.success && result.profile) {
+          setUserProfile(result.profile);
+          const initials = getInitials(result.profile.full_name || "User");
+          setUserInitials(initials);
+        }
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  // Handle navigation with special routing for Profile
+  const handleMenuSelect = (id: string) => {
+    if (id === "profile") {
+      router.push("/dashboard/profile");
+    } else {
+      setCurrentPage(id);
+    }
+  };
 
   const menuItems: MenuItem[] = [
     {
@@ -247,7 +302,7 @@ export default function Home() {
       {/* Sidebar */}
       <Sidebar
         menuItems={menuItems}
-        onSelect={setCurrentPage}
+        onSelect={handleMenuSelect}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
       />
@@ -284,8 +339,8 @@ export default function Home() {
                   aria-hidden="true"
                 ></span>
               </button>
-              <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-brand-primary to-brand-teal shadow-md flex items-center justify-center text-white font-medium">
-                AM
+              <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-brand-primary to-brand-teal shadow-md flex items-center justify-center text-white font-medium text-sm">
+                {userInitials}
               </div>
             </div>
           </div>
