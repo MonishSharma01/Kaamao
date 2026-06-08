@@ -1,30 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import {
-  getCurrentUser,
-  getUserProfile,
-  supabase,
-  UserProfile,
-  signOut,
-} from "@/lib/supabase";
-import type { UserProfile as SupabaseUserProfile } from "@/lib/supabase";
-import { User as SupabaseUser } from "@supabase/supabase-js";
-import {
-  LayoutDashboard,
-  Briefcase,
-  Search,
-  MapPin,
-  BarChart3,
-  User,
-  Settings as SettingsIcon,
-  Bell,
-  ChevronLeft,
-  Plus,
-  LogOut,
-} from "lucide-react";
-import Image from "next/image";
+export default function DashboardPage() {
+  return (
+    <div className="space-y-6">
+      {/* Welcome Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Welcome to Kaamao</h1>
+        <p className="text-gray-600 mt-2">Your service marketplace dashboard</p>
+      </div>
 
 // Import the Create Service Page component
 import CreateServicePage from "./create-service/page";
@@ -37,141 +20,33 @@ type MenuItem = {
   active: boolean;
 };
 
-// --- Sidebar Component ---
-const Sidebar: React.FC<{
-  menuItems: MenuItem[];
-  onSelect: (id: string) => void;
-  collapsed: boolean;
-  setCollapsed: (collapsed: boolean) => void;
-  profileName: string;
-  profileEmail: string;
-  onLogout: () => void;
-}> = ({
-  menuItems,
-  onSelect,
-  collapsed,
-  setCollapsed,
-  profileName,
-  profileEmail,
-  onLogout,
-}) => {
-  return (
-    <aside
-      className={`fixed left-0 top-0 h-full bg-gradient-to-b from-brand-primary-dark via-brand-primary to-brand-primary-muted text-white transition-all duration-300 z-20 shadow-2xl ${
-        collapsed ? "w-20" : "w-64"
-      }`}
-    >
-      <div className="flex flex-col h-full">
-        {/* Logo Area */}
-        <div
-          className={`flex items-center h-20 px-6 border-b border-white/10 ${collapsed ? "justify-center" : "justify-between"}`}
-        >
-          {!collapsed && (
-            <div className="flex items-center gap-2">
-              <div className="relative w-8 h-8">
-                <Image
-                  src="/logo.svg"
-                  alt="ServiceHub Logo"
-                  width={32}
-                  height={32}
-                  className="object-contain"
-                />
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Recent Bookings</h2>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+              <div>
+                <p className="font-medium text-gray-900">Maths Tutoring</p>
+                <p className="text-sm text-gray-500">Rahul Sharma • Today, 10:00 AM</p>
               </div>
-              <span className="font-bold text-xl tracking-tight">
-                ServiceHub
-              </span>
+              <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">Pending</span>
             </div>
-          )}
-          {collapsed && (
-            <div className="relative w-8 h-8">
-              <Image
-                src="/logo.svg"
-                alt="ServiceHub Logo"
-                width={32}
-                height={32}
-                className="object-contain"
-              />
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={() => setCollapsed(!collapsed)}
-            className="p-1.5 rounded-lg hover:bg-white/10 transition-colors"
-            title="Toggle sidebar"
-            aria-label="Toggle sidebar"
-          >
-            <ChevronLeft
-              className={`h-5 w-5 transition-transform duration-300 ${collapsed ? "rotate-180" : ""}`}
-            />
-          </button>
-        </div>
-
-        {/* Navigation */}
-        <nav className="flex-1 py-8 px-3 space-y-1.5">
-          {menuItems.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelect(item.id)}
-                className={`
-                  w-full flex items-center gap-3 px-3 py-3 rounded-xl transition-all duration-200 group
-                  ${
-                    item.active
-                      ? "bg-white/20 shadow-lg text-white"
-                      : "text-white/70 hover:bg-white/10 hover:text-white"
-                  }
-                  ${collapsed ? "justify-center" : ""}
-                `}
-              >
-                <Icon
-                  className={`h-5 w-5 transition-transform duration-200 group-hover:scale-110 ${item.active ? "text-white" : ""}`}
-                />
-                {!collapsed && (
-                  <span className="text-sm font-medium">{item.label}</span>
-                )}
-                {!collapsed && item.active && (
-                  <div className="ml-auto w-1.5 h-5 bg-white rounded-full" />
-                )}
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Footer */}
-        <div className="p-4 border-t border-white/10 flex flex-col gap-2">
-          <div
-            className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""}`}
-          >
-            <div className="h-8 w-8 rounded-full bg-white/20 flex items-center justify-center">
-              <User className="h-4 w-4" />
-            </div>
-            {!collapsed && (
-              <div className="text-left max-w-[150px] overflow-hidden">
-                <p className="text-xs font-medium truncate" title={profileName}>
-                  {profileName}
-                </p>
-                <p
-                  className="text-[10px] text-white/60 truncate"
-                  title={profileEmail}
-                >
-                  {profileEmail}
-                </p>
+            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+              <div>
+                <p className="font-medium text-gray-900">Science Tutoring</p>
+                <p className="text-sm text-gray-500">Priya Patel • Tomorrow, 3:00 PM</p>
               </div>
-            )}
+              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">Confirmed</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium text-gray-900">Homework Help</p>
+                <p className="text-sm text-gray-500">Amit Kumar • Yesterday, 5:00 PM</p>
+              </div>
+              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">Completed</span>
+            </div>
           </div>
-
-          <button
-            type="button"
-            onClick={onLogout}
-            className={`flex items-center gap-3 w-full px-3 py-2.5 rounded-xl transition-all duration-200 text-white/70 hover:bg-red-500/20 hover:text-red-200 group ${
-              collapsed ? "justify-center" : ""
-            }`}
-            title="Log Out"
-          >
-            <LogOut className="h-5 w-5 transition-transform duration-200 group-hover:scale-110" />
-            {!collapsed && <span className="text-sm font-medium">Log Out</span>}
-          </button>
         </div>
       </div>
     </aside>
@@ -496,28 +371,13 @@ export default function Home() {
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-white/50 border border-gray-200/80 focus:ring-2 focus:ring-brand-primary focus:border-transparent text-sm"
               />
             </div>
-
-            {/* Right: Notifications & Avatar */}
-            <div className="flex items-center gap-4">
-              <button
-                type="button"
-                aria-label="Notifications"
-                title="Notifications"
-                className="p-2 rounded-xl hover:bg-white/60 transition relative"
-              >
-                <Bell className="h-5 w-5 text-gray-600" />
-                <span className="sr-only">Notifications</span>
-                <span
-                  className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"
-                  aria-hidden="true"
-                ></span>
-              </button>
-              <div
-                className="h-9 w-9 rounded-full bg-gradient-to-tr from-brand-primary to-brand-teal shadow-md flex items-center justify-center text-white font-medium"
-                title={pName}
-              >
-                {initials}
+            <div className="pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="flex text-yellow-400 text-sm">★★★★★</div>
+                <span className="text-sm font-medium text-gray-900">Rohit Mehta</span>
               </div>
+              <p className="text-sm text-gray-600">Explains concepts very clearly and patiently.</p>
+              <p className="text-xs text-gray-400 mt-1">1 month ago</p>
             </div>
           </div>
         </header>
