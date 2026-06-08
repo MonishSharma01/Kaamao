@@ -25,10 +25,18 @@ export async function POST(request: Request) {
       pincode,
     } = body;
 
-    if (!email || !password || !fullName || !phoneNo || !dob || !locationCity || !pincode) {
+    if (
+      !email ||
+      !password ||
+      !fullName ||
+      !phoneNo ||
+      !dob ||
+      !locationCity ||
+      !pincode
+    ) {
       return NextResponse.json(
         { error: "Missing required fields" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -36,7 +44,7 @@ export async function POST(request: Request) {
     if (!emailRegex.test(email)) {
       return NextResponse.json(
         { error: "Please enter a valid email address" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -44,14 +52,14 @@ export async function POST(request: Request) {
     if (!phoneRegex.test(phoneNo.replace(/\D/g, ""))) {
       return NextResponse.json(
         { error: "Please enter a valid 10-digit phone number" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
     if (password.length < 6) {
       return NextResponse.json(
         { error: "Password must be at least 6 characters" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -72,7 +80,7 @@ export async function POST(request: Request) {
       if (authError.message.includes("User already registered")) {
         return NextResponse.json(
           { error: "This email is already registered. Please login instead." },
-          { status: 400 }
+          { status: 400 },
         );
       }
 
@@ -82,7 +90,7 @@ export async function POST(request: Request) {
     if (!authData.user) {
       return NextResponse.json(
         { error: "Failed to create user account" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -100,14 +108,38 @@ export async function POST(request: Request) {
 
     if (insertError) {
       console.error("Insert error:", insertError);
-      return NextResponse.json(
-        {
-          success: true,
-          message: "Account created successfully! Please login.",
-          warning: "Profile setup had issues, but you can still login.",
-        },
-        { status: 200 }
-      );
+
+      // Clean up the created auth user to avoid orphan accounts without database profiles
+      try {
+        await supabaseAdmin.auth.admin.deleteUser(authData.user.id);
+      } catch (cleanupError) {
+        console.error(
+          "Cleanup error after failed profile insert:",
+          cleanupError,
+        );
+      }
+
+      let errorMessage = "Failed to setup user profile. Please try again.";
+      if (
+        insertError.message?.toLowerCase().includes("unique constraint") ||
+        insertError.code === "23505"
+      ) {
+        if (
+          insertError.message?.toLowerCase().includes("phone_no") ||
+          insertError.details?.includes("phone_no")
+        ) {
+          errorMessage =
+            "This phone number is already registered. Please use a different one.";
+        } else if (
+          insertError.message?.toLowerCase().includes("email") ||
+          insertError.details?.includes("email")
+        ) {
+          errorMessage =
+            "This email is already registered. Please login instead.";
+        }
+      }
+
+      return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
     console.log("User created successfully:", authData.user.id);
@@ -117,13 +149,13 @@ export async function POST(request: Request) {
         success: true,
         message: "Account created successfully! Please login.",
       },
-      { status: 200 }
+      { status: 200 },
     );
   } catch (error) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal server error. Please try again." },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

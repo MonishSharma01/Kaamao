@@ -295,8 +295,8 @@ export default function RegisterPage() {
                     step === 1
                       ? "text-white"
                       : step > 1
-                      ? "text-white"
-                      : "bg-gray-200 text-gray-500"
+                        ? "text-white"
+                        : "bg-gray-200 text-gray-500"
                   }`}
                   style={
                     step === 1 || step > 1
@@ -318,8 +318,8 @@ export default function RegisterPage() {
                     step === 2
                       ? "text-white"
                       : step > 2
-                      ? "text-white"
-                      : "bg-gray-200 text-gray-500"
+                        ? "text-white"
+                        : "bg-gray-200 text-gray-500"
                   }`}
                   style={
                     step === 2 || step > 2

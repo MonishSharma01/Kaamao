@@ -1,6 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { getCurrentUser, supabase, UserProfile } from "@/lib/supabase";
+import { User as SupabaseUser } from "@supabase/supabase-js";
 import {
   LayoutDashboard,
   Briefcase,
@@ -29,7 +32,16 @@ const Sidebar: React.FC<{
   onSelect: (id: string) => void;
   collapsed: boolean;
   setCollapsed: (collapsed: boolean) => void;
-}> = ({ menuItems, onSelect, collapsed, setCollapsed }) => {
+  profileName: string;
+  profileEmail: string;
+}> = ({
+  menuItems,
+  onSelect,
+  collapsed,
+  setCollapsed,
+  profileName,
+  profileEmail,
+}) => {
   return (
     <aside
       className={`fixed left-0 top-0 h-full bg-gradient-to-b from-brand-primary-dark via-brand-primary to-brand-primary-muted text-white transition-all duration-300 z-20 shadow-2xl ${
@@ -122,9 +134,16 @@ const Sidebar: React.FC<{
               <User className="h-4 w-4" />
             </div>
             {!collapsed && (
-              <div className="text-left">
-                <p className="text-xs font-medium">Alex Morgan</p>
-                <p className="text-[10px] text-white/60">Premium Pro</p>
+              <div className="text-left max-w-[150px] overflow-hidden">
+                <p className="text-xs font-medium truncate" title={profileName}>
+                  {profileName}
+                </p>
+                <p
+                  className="text-[10px] text-white/60 truncate"
+                  title={profileEmail}
+                >
+                  {profileEmail}
+                </p>
               </div>
             )}
           </div>
@@ -173,8 +192,83 @@ const FloatingActionButton: React.FC<{ onClick: () => void }> = ({
 
 // --- Main App Component ---
 export default function Home() {
+  const router = useRouter();
+  const [user, setUser] = useState<SupabaseUser | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [currentPage, setCurrentPage] = useState<string>("dashboard");
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+
+  useEffect(() => {
+    async function checkAuthAndProfile() {
+      try {
+        const { user: authUser } = await getCurrentUser();
+        if (!authUser) {
+          router.push("/login");
+          return;
+        }
+
+        const authUserObj = authUser as SupabaseUser;
+        setUser(authUserObj);
+
+        if (supabase) {
+          // Check if profile exists in public.users
+          const { data: userProfile } = await supabase
+            .from("users")
+            .select("*")
+            .eq("id", authUserObj.id)
+            .maybeSingle();
+
+          if (userProfile) {
+            setProfile(userProfile as UserProfile);
+          } else {
+            // Profile doesn't exist (e.g. third-party login or failed insert during signup)
+            // Save user login details properly in the database
+            const fullName =
+              authUserObj.user_metadata?.full_name ||
+              authUserObj.user_metadata?.name ||
+              authUserObj.email?.split("@")[0] ||
+              "User";
+            const email = authUserObj.email || "";
+            const phoneNo =
+              authUserObj.user_metadata?.phone_no ||
+              `google_${authUserObj.id.slice(0, 8)}`;
+
+            const newProfile: UserProfile = {
+              id: authUserObj.id,
+              full_name: fullName,
+              email: email,
+              phone_no: phoneNo,
+              dob: "2000-01-01", // Default date required by NOT NULL constraint
+              location_city: "Unknown", // Default city required by NOT NULL constraint
+              neighborhood: null,
+              pincode: "000000", // Default pincode required by NOT NULL constraint
+              created_at: new Date().toISOString(),
+            };
+
+            const { error: insertError } = await supabase
+              .from("users")
+              .insert(newProfile);
+
+            if (!insertError) {
+              setProfile(newProfile);
+            } else {
+              console.error(
+                "Failed to automatically save profile in database:",
+                insertError,
+              );
+            }
+          }
+        }
+      } catch (err) {
+        console.error("Auth and profile loading failed:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    checkAuthAndProfile();
+  }, [router]);
 
   const menuItems: MenuItem[] = [
     {
@@ -242,6 +336,31 @@ export default function Home() {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-brand-bg-light flex flex-col items-center justify-center p-4">
+        <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+        <p className="mt-4 text-gray-600 font-medium animate-pulse">
+          Loading dashboard...
+        </p>
+      </div>
+    );
+  }
+
+  const pName =
+    profile?.full_name ||
+    user?.user_metadata?.full_name ||
+    user?.email?.split("@")[0] ||
+    "User";
+  const pEmail = user?.email || "";
+  const initials =
+    pName
+      .split(" ")
+      .map((n: string) => n[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase() || "US";
+
   return (
     <div className="min-h-screen bg-brand-bg-light font-sans antialiased">
       {/* Sidebar */}
@@ -250,6 +369,8 @@ export default function Home() {
         onSelect={setCurrentPage}
         collapsed={sidebarCollapsed}
         setCollapsed={setSidebarCollapsed}
+        profileName={pName}
+        profileEmail={pEmail}
       />
 
       {/* Main Content Area */}
@@ -284,8 +405,11 @@ export default function Home() {
                   aria-hidden="true"
                 ></span>
               </button>
-              <div className="h-9 w-9 rounded-full bg-gradient-to-tr from-brand-primary to-brand-teal shadow-md flex items-center justify-center text-white font-medium">
-                AM
+              <div
+                className="h-9 w-9 rounded-full bg-gradient-to-tr from-brand-primary to-brand-teal shadow-md flex items-center justify-center text-white font-medium"
+                title={pName}
+              >
+                {initials}
               </div>
             </div>
           </div>
