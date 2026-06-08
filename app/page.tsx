@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import WaitlistModal from "../components/WaitlistModal";
 
 /* ─── Icon helper ─────────────────────────────────────────── */
 function Icon({
@@ -98,7 +97,7 @@ const TRUST_CHECKS = [
 export default function Home() {
   const [skill, setSkill] = useState("");
   const [location, setLocation] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
 
@@ -139,10 +138,21 @@ export default function Home() {
     return () => clearInterval(timer);
   }, []);
 
-  const openModal = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIsModalOpen(true);
+  const showToast = (message: string) => {
+    setToast(null);
+    setTimeout(() => {
+      setToast(message);
+    }, 10);
   };
+
+  useEffect(() => {
+    if (toast) {
+      const timer = setTimeout(() => {
+        setToast(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [toast]);
 
   return (
     <div
@@ -151,8 +161,9 @@ export default function Home() {
     >
       {/* ══════ NAVBAR ══════════════════════════════════════════ */}
       <header
-        className={`fixed inset-x-0 top-0 z-50 transition-all duration-200 ${scrolled ? "shadow-sm" : ""
-          }`}
+        className={`fixed inset-x-0 top-0 z-50 transition-all duration-200 ${
+          scrolled ? "shadow-sm" : ""
+        }`}
         style={{ backgroundColor: "var(--color-brand-white)" }}
       >
         <nav className="mx-auto flex h-[64px] max-w-[1140px] items-center justify-between px-6">
@@ -172,12 +183,6 @@ export default function Home() {
           {/* Nav links */}
           <div className="hidden md:flex items-center gap-8">
             <Link
-              href="/#how-it-works"
-              className="text-sm font-medium text-slate-500 hover:text-brand-primary transition-colors"
-            >
-              How it Works
-            </Link>
-            <Link
               href="/#features"
               className="text-sm font-medium text-slate-500 hover:text-brand-primary transition-colors"
             >
@@ -189,6 +194,12 @@ export default function Home() {
             >
               Find Skills
             </Link>
+            <Link
+              href="/#how-it-works"
+              className="text-sm font-medium text-slate-500 hover:text-brand-primary transition-colors"
+            >
+              How it Works
+            </Link>
           </div>
 
           {/* Actions */}
@@ -199,13 +210,13 @@ export default function Home() {
             >
               Sign In
             </Link>
-            <button
-              onClick={openModal}
-              className="text-sm font-bold text-white px-5 py-2.5 rounded-full transition-opacity hover:opacity-90 active:scale-95"
+            <Link
+              href="/register"
+              className="text-sm font-bold text-white px-5 py-2.5 rounded-full transition-opacity hover:opacity-90 active:scale-95 inline-block text-center"
               style={{ backgroundColor: "var(--color-brand-primary)" }}
             >
               Join as Provider
-            </button>
+            </Link>
           </div>
         </nav>
       </header>
@@ -257,8 +268,8 @@ export default function Home() {
                   />
                 </label>
                 <button
-                  onClick={openModal}
-                  className="shrink-0 text-white font-bold text-sm px-7 hover:opacity-90 active:scale-95 transition-all"
+                  onClick={() => showToast("functionality coming soon..")}
+                  className="shrink-0 text-white font-bold text-sm px-7 hover:opacity-90 active:scale-95 transition-all cursor-pointer"
                   style={{ backgroundColor: "var(--color-brand-primary)" }}
                 >
                   Search
@@ -267,42 +278,84 @@ export default function Home() {
 
               {/* Download Buttons */}
               <div className="flex items-center gap-3 mb-8">
-
                 {/* Google Play */}
-                <a
-                  href="#"
-                  onClick={openModal}
-                  className="flex items-center gap-2.5 bg-black text-white rounded-xl px-4 py-2.5 hover:opacity-80 active:scale-95 transition-all"
+                <button
+                  onClick={() => showToast("app coming soon")}
+                  className="flex items-center gap-2.5 bg-black text-white rounded-xl px-4 py-2.5 hover:opacity-80 active:scale-95 transition-all cursor-pointer text-left"
                 >
-                  <svg viewBox="0 0 24 24" className="w-6 h-6 shrink-0" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="w-6 h-6 shrink-0"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <defs>
-                      <linearGradient id="gp1" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient
+                        id="gp1"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
                         <stop offset="0%" stopColor="#00C6FF" />
                         <stop offset="100%" stopColor="#00A8E8" />
                       </linearGradient>
-                      <linearGradient id="gp2" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient
+                        id="gp2"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
                         <stop offset="0%" stopColor="#FFD000" />
                         <stop offset="100%" stopColor="#FF8C00" />
                       </linearGradient>
-                      <linearGradient id="gp3" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient
+                        id="gp3"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
                         <stop offset="0%" stopColor="#FF3A44" />
                         <stop offset="100%" stopColor="#C31162" />
                       </linearGradient>
-                      <linearGradient id="gp4" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <linearGradient
+                        id="gp4"
+                        x1="0%"
+                        y1="0%"
+                        x2="100%"
+                        y2="100%"
+                      >
                         <stop offset="0%" stopColor="#32DF84" />
                         <stop offset="100%" stopColor="#00B057" />
                       </linearGradient>
                     </defs>
-                    <path d="M3.18 23.76c.3.16.64.2.97.12L14.39 12 10.76 8.37 3.18 23.76z" fill="url(#gp1)" />
-                    <path d="M20.5 10.55l-2.8-1.6-3.31 3.05 3.31 3.06 2.83-1.62c.81-.46.81-1.63-.03-2.89z" fill="url(#gp2)" />
-                    <path d="M3.18.24C2.84.14 2.47.2 2.18.41L14.39 12 17.7 8.95 4.15.36c-.32-.2-.66-.25-.97-.12z" fill="url(#gp3)" />
-                    <path d="M2.18 23.59c.29.21.66.27.97.17l13.55-8.59L13.39 12 2.18 23.59z" fill="url(#gp4)" />
+                    <path
+                      d="M3.18 23.76c.3.16.64.2.97.12L14.39 12 10.76 8.37 3.18 23.76z"
+                      fill="url(#gp1)"
+                    />
+                    <path
+                      d="M20.5 10.55l-2.8-1.6-3.31 3.05 3.31 3.06 2.83-1.62c.81-.46.81-1.63-.03-2.89z"
+                      fill="url(#gp2)"
+                    />
+                    <path
+                      d="M3.18.24C2.84.14 2.47.2 2.18.41L14.39 12 17.7 8.95 4.15.36c-.32-.2-.66-.25-.97-.12z"
+                      fill="url(#gp3)"
+                    />
+                    <path
+                      d="M2.18 23.59c.29.21.66.27.97.17l13.55-8.59L13.39 12 2.18 23.59z"
+                      fill="url(#gp4)"
+                    />
                   </svg>
                   <div className="text-left leading-tight">
-                    <p className="text-[9px] font-medium opacity-80 uppercase tracking-wide">GET IT ON</p>
-                    <p className="text-[14px] font-bold leading-none">Google Play</p>
+                    <p className="text-[9px] font-medium opacity-80 uppercase tracking-wide">
+                      GET IT ON
+                    </p>
+                    <p className="text-[14px] font-bold leading-none">
+                      Google Play
+                    </p>
                   </div>
-                </a>
+                </button>
               </div>
 
               {/* Stats */}
@@ -369,10 +422,11 @@ export default function Home() {
                     <button
                       key={i}
                       onClick={() => setCarouselIndex(i)}
-                      className={`rounded-full transition-all duration-300 ${carouselIndex === i
-                        ? "w-6 h-2 bg-white"
-                        : "w-2 h-2 bg-white/50 hover:bg-white/80"
-                        }`}
+                      className={`rounded-full transition-all duration-300 ${
+                        carouselIndex === i
+                          ? "w-6 h-2 bg-white"
+                          : "w-2 h-2 bg-white/50 hover:bg-white/80"
+                      }`}
                     />
                   ))}
                 </div>
@@ -426,10 +480,7 @@ export default function Home() {
         </section>
 
         {/* ══════ FEATURES ══════════════════════════════════════ */}
-        <section
-          id="features"
-          className="pt-10 pb-20 bg-white"
-        >
+        <section id="features" className="scroll-mt-20 pt-10 pb-20 bg-white">
           <div className="mx-auto max-w-[1140px] px-6">
             {/* Heading */}
             <div className="text-center mb-14">
@@ -454,7 +505,11 @@ export default function Home() {
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
                   style={{ backgroundColor: "var(--color-brand-bg-light)" }}
                 >
-                  <Icon name="location_on" fill className="text-xl text-brand-primary" />
+                  <Icon
+                    name="location_on"
+                    fill
+                    className="text-xl text-brand-primary"
+                  />
                 </div>
                 <h3 className="text-[15px] font-extrabold text-brand-primary mb-2">
                   Location-Based Discovery
@@ -471,7 +526,11 @@ export default function Home() {
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
                   style={{ backgroundColor: "var(--color-brand-bg-light)" }}
                 >
-                  <Icon name="verified_user" fill className="text-xl text-brand-primary" />
+                  <Icon
+                    name="verified_user"
+                    fill
+                    className="text-xl text-brand-primary"
+                  />
                 </div>
                 <h3 className="text-[15px] font-extrabold text-brand-primary mb-2">
                   Secure Payments
@@ -488,7 +547,11 @@ export default function Home() {
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
                   style={{ backgroundColor: "var(--color-brand-bg-light)" }}
                 >
-                  <Icon name="manage_accounts" fill className="text-xl text-brand-primary" />
+                  <Icon
+                    name="manage_accounts"
+                    fill
+                    className="text-xl text-brand-primary"
+                  />
                 </div>
                 <h3 className="text-[15px] font-extrabold text-brand-primary mb-2">
                   Verified Profiles
@@ -505,7 +568,11 @@ export default function Home() {
                   className="w-11 h-11 rounded-xl flex items-center justify-center mb-5"
                   style={{ backgroundColor: "var(--color-brand-bg-light)" }}
                 >
-                  <Icon name="chat" fill className="text-xl text-brand-primary" />
+                  <Icon
+                    name="chat"
+                    fill
+                    className="text-xl text-brand-primary"
+                  />
                 </div>
                 <h3 className="text-[15px] font-extrabold text-brand-primary mb-2">
                   Direct Communication
@@ -520,7 +587,7 @@ export default function Home() {
         </section>
 
         {/* ══════ POPULAR LOCAL SKILLS ════════════════════════════ */}
-        <section id="skills" className="py-16 bg-brand-bg-light">
+        <section id="skills" className="scroll-mt-20 py-16 bg-brand-bg-light">
           <div className="mx-auto max-w-[1140px] px-6">
             {/* Header row */}
             <div className="flex items-end justify-between mb-8">
@@ -533,13 +600,13 @@ export default function Home() {
                   find the help you need today.
                 </p>
               </div>
-              <Link
-                href="/categories"
-                className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:opacity-70 transition-opacity whitespace-nowrap shrink-0"
+              <button
+                onClick={() => showToast("coming soon..")}
+                className="hidden sm:flex items-center gap-1.5 text-sm font-semibold text-brand-primary hover:opacity-70 transition-opacity whitespace-nowrap shrink-0 cursor-pointer"
               >
                 View All Categories
                 <Icon name="arrow_forward" className="text-base" />
-              </Link>
+              </button>
             </div>
 
             {/* Cards grid */}
@@ -547,8 +614,8 @@ export default function Home() {
               {SKILLS.map((s) => (
                 <button
                   key={s.title}
-                  onClick={openModal}
-                  className="text-left bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group"
+                  onClick={() => showToast("functionality coming soon..")}
+                  className="text-left bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 group cursor-pointer"
                 >
                   {/* Image */}
                   <div className="relative h-[200px] overflow-hidden">
@@ -591,7 +658,7 @@ export default function Home() {
         {/* ══════ HOW IT WORKS ════════════════════════════════════ */}
         <section
           id="how-it-works"
-          className="py-20"
+          className="scroll-mt-20 py-20"
           style={{ backgroundColor: "var(--color-brand-primary)" }}
         >
           <div className="mx-auto max-w-[1140px] px-6">
@@ -641,12 +708,12 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <button
-                  onClick={openModal}
-                  className="mt-8 text-sm font-bold text-white border border-white/40 rounded-full px-6 py-2.5 hover:bg-white/10 transition-colors active:scale-95"
+                <Link
+                  href="/register"
+                  className="mt-8 text-sm font-bold text-white border border-white/40 rounded-full px-6 py-2.5 hover:bg-white/10 transition-colors active:scale-95 inline-block text-center"
                 >
                   Join as Provider
-                </button>
+                </Link>
               </div>
 
               {/* For Customers */}
@@ -682,13 +749,13 @@ export default function Home() {
                     </div>
                   ))}
                 </div>
-                <button
-                  onClick={openModal}
-                  className="mt-8 text-sm font-bold text-white px-7 py-2.5 rounded-full hover:opacity-90 active:scale-95 transition-all"
+                <Link
+                  href="/register"
+                  className="mt-8 text-sm font-bold text-white px-7 py-2.5 rounded-full hover:opacity-90 active:scale-95 transition-all inline-block text-center"
                   style={{ backgroundColor: "var(--color-brand-teal)" }}
                 >
                   Find a Service
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -767,8 +834,8 @@ export default function Home() {
                 ))}
               </ul>
               <button
-                onClick={openModal}
-                className="text-sm font-bold text-brand-primary border border-brand-primary-light bg-brand-bg-light rounded-xl px-6 py-3 hover:bg-brand-bg-hover transition-colors active:scale-95"
+                onClick={() => showToast("functionality coming soon..")}
+                className="text-sm font-bold text-brand-primary border border-brand-primary-light bg-brand-bg-light rounded-xl px-6 py-3 hover:bg-brand-bg-hover transition-colors active:scale-95 cursor-pointer"
               >
                 Learn About Our Safety Standards
               </button>
@@ -796,19 +863,19 @@ export default function Home() {
                 simplifying their lives with LocalSkill Connect.
               </p>
               <div className="flex flex-wrap items-center justify-center gap-4">
-                <button
-                  onClick={openModal}
-                  className="text-sm font-bold text-brand-primary bg-white px-7 py-3.5 rounded-full hover:bg-slate-100 active:scale-95 transition-all"
+                <Link
+                  href="/register"
+                  className="text-sm font-bold text-brand-primary bg-white px-7 py-3.5 rounded-full hover:bg-slate-100 active:scale-95 transition-all inline-block text-center"
                 >
                   Find Nearby Services
-                </button>
-                <button
-                  onClick={openModal}
-                  className="text-sm font-bold text-white px-7 py-3.5 rounded-full hover:opacity-90 active:scale-95 transition-all"
+                </Link>
+                <Link
+                  href="/register"
+                  className="text-sm font-bold text-white px-7 py-3.5 rounded-full hover:opacity-90 active:scale-95 transition-all inline-block text-center"
                   style={{ backgroundColor: "var(--color-brand-teal)" }}
                 >
                   Register as Provider
-                </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -844,28 +911,27 @@ export default function Home() {
               "Help Center",
               "Community Guidelines",
             ].map((l) => (
-              <a
+              <button
                 key={l}
-                href="#"
-                onClick={openModal}
-                className="text-[12px] text-slate-500 hover:text-brand-primary transition-colors"
+                onClick={() => showToast("functionality coming soon..")}
+                className="text-[12px] text-slate-500 hover:text-brand-primary transition-colors cursor-pointer"
               >
                 {l}
-              </a>
+              </button>
             ))}
           </div>
 
           {/* Right icons */}
           <div className="flex items-center gap-2">
             <button
-              onClick={openModal}
-              className="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors"
+              onClick={() => showToast("functionality coming soon..")}
+              className="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
             >
               <Icon name="share" className="text-base text-slate-500" />
             </button>
             <button
-              onClick={openModal}
-              className="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors"
+              onClick={() => showToast("functionality coming soon..")}
+              className="w-9 h-9 rounded-full border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors cursor-pointer"
             >
               <Icon name="language" className="text-base text-slate-500" />
             </button>
@@ -873,12 +939,14 @@ export default function Home() {
         </div>
       </footer>
 
-      <WaitlistModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        projectId="kaamao"
-        projectName="Kaamao Connect"
-      />
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-3 bg-slate-900 border border-slate-800 text-white px-5 py-3.5 rounded-2xl shadow-2xl animate-toast text-sm font-semibold tracking-wide">
+          <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-500/10 text-amber-500">
+            <Icon name="info" className="text-[14px]" />
+          </div>
+          <span>{toast}</span>
+        </div>
+      )}
     </div>
   );
 }
