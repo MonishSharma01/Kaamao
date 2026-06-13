@@ -13,7 +13,14 @@ const TEAM_MEMBERS = [
     bio: "Akshat is the visionary founder of Kaamao, leading corporate strategy, business development, and key growth partnerships. He is focused on bridging the gap between local talent and economic opportunities.",
     initials: "AS",
     image: "/assets/teams/akshat.jpeg",
-    skills: ["Corporate Strategy", "Venture Capital", "Growth Hacking", "Leadership", "Business Ops", "Partnerships"],
+    skills: [
+      "Corporate Strategy",
+      "Venture Capital",
+      "Growth Hacking",
+      "Leadership",
+      "Business Ops",
+      "Partnerships",
+    ],
     socials: {
       github: "https://github.com/dontknowhowtocode69",
       linkedin: "https://www.linkedin.com/in/akshat-sabnis-84a139336/",
@@ -26,7 +33,14 @@ const TEAM_MEMBERS = [
     bio: "Indresh is a passionate engineer specializing in full-stack architecture, database design, and cloud deployments. He drives the technical vision, focusing on building high-performance, accessible, and secure platform architectures.",
     initials: "IS",
     image: "/assets/teams/indresh.jpeg",
-    skills: ["Next.js", "TypeScript", "PostgreSQL", "Supabase", "System Architecture", "Cloud Deployments"],
+    skills: [
+      "Next.js",
+      "TypeScript",
+      "PostgreSQL",
+      "Supabase",
+      "System Architecture",
+      "Cloud Deployments",
+    ],
     socials: {
       github: "https://github.com/indresh404",
       linkedin: "https://www.linkedin.com/in/indresh-suresh-093646399",
@@ -39,7 +53,14 @@ const TEAM_MEMBERS = [
     bio: "Monish leads the product strategy and user experience design at Kaamao. With a background in user research and agile growth, he ensures the platform remains incredibly intuitive for all community members.",
     initials: "MS",
     image: "/assets/teams/monish.jpeg",
-    skills: ["Product Strategy", "UX Design", "Wireframing", "User Research", "Product Analytics", "Agile PM"],
+    skills: [
+      "Product Strategy",
+      "UX Design",
+      "Wireframing",
+      "User Research",
+      "Product Analytics",
+      "Agile PM",
+    ],
     socials: {
       github: "https://github.com/MonishSharma01",
       linkedin: "https://www.linkedin.com/in/monish-sharma-16799b3b5/",
@@ -52,7 +73,14 @@ const TEAM_MEMBERS = [
     bio: "Shashank manages marketing strategy, public relations, and operational workflows. He focuses on scaling user acquisition, building community trust, and running localized outreach campaigns.",
     initials: "SS",
     image: "/assets/teams/shashank.jpeg",
-    skills: ["Growth Marketing", "Public Relations", "Brand Strategy", "Community Ops", "Content Marketing", "SEO"],
+    skills: [
+      "Growth Marketing",
+      "Public Relations",
+      "Brand Strategy",
+      "Community Ops",
+      "Content Marketing",
+      "SEO",
+    ],
     socials: {
       github: "https://github.com/shashsharmaa",
       linkedin: "https://www.linkedin.com/in/shashank-sharma-2376993b8/",
@@ -65,7 +93,14 @@ const TEAM_MEMBERS = [
     bio: "Utkarsh is a software developer focusing on frontend features, interactive user interfaces, and state management. He ensures a smooth, highly responsive, and accessible user experience across all devices.",
     initials: "UP",
     image: "/assets/teams/utkarsh.jpeg",
-    skills: ["React", "Tailwind CSS", "Frontend Architecture", "State Management", "UI/UX", "Framer Motion"],
+    skills: [
+      "React",
+      "Tailwind CSS",
+      "Frontend Architecture",
+      "State Management",
+      "UI/UX",
+      "Framer Motion",
+    ],
     socials: {
       github: "https://github.com/utkarshpan",
       linkedin: "https://www.linkedin.com/in/utkarsh-pandey-95507631b/",
@@ -78,7 +113,14 @@ const TEAM_MEMBERS = [
     bio: "Divya specializes in backend services, API integrations, and database performance. Divya works on optimizing search algorithms and queries to keep local discoverability fast and reliable.",
     initials: "DS",
     image: "/assets/teams/divya.png",
-    skills: ["Node.js", "Express", "PostgreSQL", "Prisma", "REST APIs", "Query Optimization"],
+    skills: [
+      "Node.js",
+      "Express",
+      "PostgreSQL",
+      "Prisma",
+      "REST APIs",
+      "Query Optimization",
+    ],
     socials: {
       github: "https://github.com/divyagsharma2006-blip",
       linkedin: "https://www.linkedin.com/in/divya-sharma-57673536b/",
@@ -91,7 +133,14 @@ const TEAM_MEMBERS = [
     bio: "Ankita is a software developer focused on frontend implementation, API integrations, and quality assurance. Ankita ensures code reliability and consistent UI across core flows.",
     initials: "AR",
     image: "/assets/teams/ankita.jpeg",
-    skills: ["React", "TypeScript", "Vitest", "Playwright", "API Integration", "Git Workflows"],
+    skills: [
+      "React",
+      "TypeScript",
+      "Vitest",
+      "Playwright",
+      "API Integration",
+      "Git Workflows",
+    ],
     socials: {
       github: "https://github.com/Ankita0325",
       linkedin: "https://www.linkedin.com/in/ankita-rajbhar-303a01307/",
@@ -101,13 +150,25 @@ const TEAM_MEMBERS = [
 ];
 
 // Reusable Image component that handles load error gracefully and shows a fallback icon
-function TeamMemberImage({ src, name, initials }: { src: string; name: string; initials: string }) {
+function TeamMemberImage({
+  src,
+  name,
+  initials,
+}: {
+  src: string;
+  name: string;
+  initials: string;
+}) {
   const [hasError, setHasError] = useState(false);
 
   if (!src || hasError) {
     return (
       <div className="w-full h-full flex flex-col items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-400 dark:text-slate-500 select-none">
-        <Icon name="person" className="text-6xl text-slate-350 dark:text-slate-600 group-hover:scale-110 transition-transform duration-500" fill />
+        <Icon
+          name="person"
+          className="text-6xl text-slate-350 dark:text-slate-600 group-hover:scale-110 transition-transform duration-500"
+          fill
+        />
         <span className="text-[11px] font-extrabold tracking-wider uppercase mt-1 text-slate-500 dark:text-slate-400 bg-slate-200/60 dark:bg-slate-700/60 px-2.5 py-0.5 rounded group-hover:scale-105 transition-transform duration-500">
           {initials}
         </span>
@@ -126,7 +187,7 @@ function TeamMemberImage({ src, name, initials }: { src: string; name: string; i
 }
 
 // Reusable Card Component with clean hover interactions and interactive spotlight effect
-function TeamMemberCard({ member }: { member: typeof TEAM_MEMBERS[0] }) {
+function TeamMemberCard({ member }: { member: (typeof TEAM_MEMBERS)[0] }) {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
   const [isHovered, setIsHovered] = useState(false);
 
@@ -167,7 +228,11 @@ function TeamMemberCard({ member }: { member: typeof TEAM_MEMBERS[0] }) {
         {/* Circular Profile Image Container with interactive gradient glow outline */}
         <div className="relative w-[136px] h-[136px] mt-10 mx-auto rounded-full p-0.5 bg-slate-100 dark:bg-slate-800 group-hover:bg-gradient-to-tr group-hover:from-brand-primary group-hover:to-brand-teal transition-all duration-500 shrink-0 z-10">
           <div className="w-full h-full rounded-full border-4 border-white dark:border-slate-900 overflow-hidden bg-white dark:bg-slate-900">
-            <TeamMemberImage src={member.image} name={member.name} initials={member.initials} />
+            <TeamMemberImage
+              src={member.image}
+              name={member.name}
+              initials={member.initials}
+            />
           </div>
         </div>
 
@@ -239,7 +304,11 @@ export default function TeamPage() {
   const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    setIsDark(document.documentElement.classList.contains("dark"));
+    const isDarkTheme = document.documentElement.classList.contains("dark");
+    const timer = setTimeout(() => {
+      setIsDark(isDarkTheme);
+    }, 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const toggleDarkMode = () => {
@@ -267,7 +336,10 @@ export default function TeamPage() {
       {/* Sticky Header widened to max-w-[1400px] */}
       <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-900 transition-colors duration-300">
         <div className="mx-auto flex h-[64px] max-w-[1400px] items-center justify-between px-6">
-          <Link href="/" className="flex items-center gap-2 group font-extrabold text-slate-900 dark:text-white text-lg">
+          <Link
+            href="/"
+            className="flex items-center gap-2 group font-extrabold text-slate-900 dark:text-white text-lg"
+          >
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-primary text-white">
               <Icon name="check" fill className="text-xs text-white" />
             </div>
@@ -280,7 +352,11 @@ export default function TeamPage() {
               className="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-brand-bg-light dark:hover:bg-slate-800 transition-all cursor-pointer shadow-sm"
               title="Toggle Dark Mode"
             >
-              <Icon name={isDark ? "light_mode" : "dark_mode"} className="text-xl" fill />
+              <Icon
+                name={isDark ? "light_mode" : "dark_mode"}
+                className="text-xl"
+                fill
+              />
             </button>
             <Link
               href="/"
