@@ -1,154 +1,129 @@
 "use client";
 
-import React, { useState } from "react";
-import { X, MapPin, Phone } from "lucide-react";
-
-// Import the Create Service Page component
-import CreateServicePage from "./create-service/page";
-
-interface Service {
-  id: string;
-  category: string;
-  title: string;
-  description: string;
-  price: string;
-  location: string;
-  contact: string;
-  postedDate: string;
-  image?: string;
-}
-
-const categoryColors: Record<string, string> = {
-  Tutor: "bg-blue-100 text-blue-700",
-  Tailor: "bg-orange-100 text-orange-700",
-  "Car washing": "bg-purple-100 text-purple-700",
-  Cooking: "bg-orange-100 text-orange-700",
-  Cleaning: "bg-green-100 text-green-700",
-  Others: "bg-gray-100 text-gray-700",
-};
-
-const mockServices: Service[] = [
-  {
-    id: "1",
-    category: "Tutor",
-    title: "Maths Tuition (Class 8-10)",
-    description:
-      "2 hours daily personalized sessions focused on competitive base and board exams with weekly assessments.",
-    price: "₹ 1500/month",
-    location: "Andheri East",
-    contact: "+91 98765 43210",
-    postedDate: "Posted 2 days",
-    image: "/api/placeholder/200/150",
-  },
-  {
-    id: "2",
-    category: "Cooking",
-    title: "Daily Home Tiffin",
-    description:
-      "Fresh lunch and dinner service Mon-Fri. Healthy, home-cooked food delivered to your office or home.",
-    price: "₹ 2500/month",
-    location: "Vile Parle West",
-    contact: "+91 99887 66554",
-    postedDate: "Posted 1 week",
-    image: "/api/placeholder/200/150",
-  },
-  {
-    id: "3",
-    category: "Tailor",
-    title: "Blouse & Dress Stitching",
-    description:
-      "Expert tailoring for ethnic wear. Custom fitting and design available. Doorstep pickup and delivery.",
-    price: "Negotiable",
-    location: "Bandra West",
-    contact: "+91 87654 32109",
-    postedDate: "Posted 3 days",
-    image: "/api/placeholder/200/150",
-  },
-];
+import Link from "next/link";
+import { Plus } from "lucide-react";
 
 export default function DashboardPage() {
-  const [services, setServices] = useState<Service[]>(mockServices);
-  const [formData, setFormData] = useState({
-    category: "",
-    customCategory: "",
-    title: "",
-    description: "",
-    price: "",
-    location: "",
-    contact: "",
-  });
+  return (
+    <div className="space-y-6 relative min-h-[calc(100vh-120px)]">
+      {/* Welcome Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <h1 className="text-2xl font-bold text-gray-900">Welcome to Kaamao</h1>
+        <p className="text-gray-600 mt-2">Your service marketplace dashboard</p>
+      </div>
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
+      {/* Stats Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition animate-pulse-subtle">
+          <h3 className="text-sm font-medium text-gray-500">Total Services</h3>
+          <p className="text-2xl font-bold text-gray-900 mt-2">12</p>
+          <p className="text-xs text-green-600 mt-2">↑ 2 new this month</p>
+        </div>
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h3 className="text-sm font-medium text-gray-500">Active Bookings</h3>
+          <p className="text-2xl font-bold text-gray-900 mt-2">5</p>
+          <p className="text-xs text-gray-500 mt-2">3 pending confirmation</p>
+        </div>
 
-    // Validation
-    if (
-      !formData.category ||
-      !formData.title ||
-      !formData.description ||
-      !formData.price ||
-      !formData.location ||
-      !formData.contact
-    ) {
-      alert("Please fill in all required fields");
-      return;
-    }
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h3 className="text-sm font-medium text-gray-500">Total Earnings</h3>
+          <p className="text-2xl font-bold text-gray-900 mt-2">₹12,500</p>
+          <p className="text-xs text-green-600 mt-2">↑ ₹2,500 this month</p>
+        </div>
 
-    if (formData.category === "Others" && !formData.customCategory) {
-      alert("Please enter a custom category");
-      return;
-    }
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition">
+          <h3 className="text-sm font-medium text-gray-500">Reviews</h3>
+          <p className="text-2xl font-bold text-gray-900 mt-2">24 ★4.8</p>
+          <p className="text-xs text-gray-500 mt-2">12 positive reviews</p>
+        </div>
+      </div>
 
-    // Create new service
-    const newService: Service = {
-      id: Date.now().toString(),
-      category:
-        formData.category === "Others"
-          ? formData.customCategory
-          : formData.category,
-      title: formData.title,
-      description: formData.description,
-      price: formData.price,
-      location: formData.location,
-      contact: formData.contact,
-      postedDate: "Posted just now",
-      image: "/api/placeholder/200/150",
-    };
+      {/* Recent Activity */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Recent Bookings
+          </h2>
+          <div className="space-y-3">
+            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+              <div>
+                <p className="font-medium text-gray-900">Maths Tutoring</p>
+                <p className="text-sm text-gray-500">
+                  Rahul Sharma • Today, 10:00 AM
+                </p>
+              </div>
+              <span className="px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-700 rounded-full">
+                Pending
+              </span>
+            </div>
+            <div className="flex justify-between items-center pb-3 border-b border-gray-100">
+              <div>
+                <p className="font-medium text-gray-900">Science Tutoring</p>
+                <p className="text-sm text-gray-500">
+                  Priya Patel • Tomorrow, 3:00 PM
+                </p>
+              </div>
+              <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-700 rounded-full">
+                Confirmed
+              </span>
+            </div>
+            <div className="flex justify-between items-center">
+              <div>
+                <p className="font-medium text-gray-900">Homework Help</p>
+                <p className="text-sm text-gray-500">
+                  Amit Kumar • Yesterday, 5:00 PM
+                </p>
+              </div>
+              <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 rounded-full">
+                Completed
+              </span>
+            </div>
+          </div>
+        </div>
 
-    // Add to top of list
-    setServices((prev) => [newService, ...prev]);
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">
+            Recent Reviews
+          </h2>
+          <div className="space-y-3">
+            <div className="pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="flex text-yellow-400 text-sm">★★★★★</div>
+                <span className="text-sm font-medium text-gray-900">
+                  Priya Verma
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Very good teacher! My son has improved a lot.
+              </p>
+              <p className="text-xs text-gray-400 mt-1">2 weeks ago</p>
+            </div>
+            <div className="pb-3 border-b border-gray-100">
+              <div className="flex items-center gap-2 mb-1">
+                <div className="flex text-yellow-400 text-sm">★★★★★</div>
+                <span className="text-sm font-medium text-gray-900">
+                  Rohit Mehta
+                </span>
+              </div>
+              <p className="text-sm text-gray-600">
+                Explains concepts very clearly and patiently.
+              </p>
+              <p className="text-xs text-gray-400 mt-1">1 month ago</p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-    // Reset form
-    setFormData({
-      category: "",
-      customCategory: "",
-      title: "",
-      description: "",
-      price: "",
-      location: "",
-      contact: "",
-    });
-  };
-
-  const handleDelete = (id: string) => {
-    setServices((prev) => prev.filter((service) => service.id !== id));
-  };
-
-  const getCategoryColor = (category: string): string => {
-    return categoryColors[category] || "bg-gray-100 text-gray-700";
-  };
-
-  return <CreateServicePage />;
+      {/* Floating Action Button */}
+      <Link
+        href="/dashboard/create-service"
+        aria-label="Create service"
+        title="Create service"
+        className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-blue-600 text-white shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 hover:shadow-blue-600/30 border border-white/20 z-30 group"
+      >
+        <Plus className="h-6 w-6 group-hover:rotate-90 transition-transform duration-300" />
+      </Link>
+    </div>
+  );
 }
