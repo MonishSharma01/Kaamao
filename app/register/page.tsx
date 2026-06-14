@@ -230,7 +230,34 @@ export default function RegisterPage() {
   const primaryColor = "var(--color-brand-primary)";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4 relative">
+      {/* Back Button - Positioned at top left */}
+      <button
+        onClick={() => router.push("/")}
+        className="fixed top-4 left-4 z-50 flex items-center gap-2 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-lg shadow-md hover:bg-white transition-all duration-200 group md:top-6 md:left-6"
+        aria-label="Go back "
+      >
+        <svg
+          className="w-5 h-5 text-gray-700 group-hover:-translate-x-0.5 transition-transform"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M10 19l-7-7m0 0l7-7m-7 7h18"
+          />
+        </svg>
+        <span className="text-sm font-medium text-gray-700 hidden sm:inline">
+          Back
+        </span>
+        <span className="text-sm font-medium text-gray-700 sm:hidden">
+          Back
+        </span>
+      </button>
+
       <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row">
         {/* Left Side */}
         <div className="w-full md:w-1/2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 relative overflow-hidden p-8 md:p-10 flex flex-col justify-between min-h-[300px] md:min-h-[550px]">
