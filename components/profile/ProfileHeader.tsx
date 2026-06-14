@@ -2,7 +2,17 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Edit, CheckCircle, Phone, Mail, MapPin, Calendar, Save, X, Navigation } from "lucide-react";
+import {
+  Edit,
+  CheckCircle,
+  Phone,
+  Mail,
+  MapPin,
+  Calendar,
+  Save,
+  X,
+  Navigation,
+} from "lucide-react";
 import { UserProfile } from "@/lib/supabase";
 
 interface ProfileHeaderProps {
@@ -72,7 +82,9 @@ export default function ProfileHeader({
               {/* Profile avatar increased to w-40 h-40 */}
               <div className="w-32 h-32 sm:w-40 sm:h-40 bg-gradient-to-br from-blue-500 to-purple-600 rounded-3xl flex items-center justify-center shadow-xl">
                 <span className="text-3xl sm:text-5xl font-extrabold text-white">
-                  {getInitials(isEditing ? formData.full_name : profile.full_name)}
+                  {getInitials(
+                    isEditing ? formData.full_name : profile.full_name,
+                  )}
                 </span>
               </div>
               <div className="absolute -bottom-1.5 -right-1.5 bg-green-500 rounded-full p-1.5 border-4 border-white shadow-md">
@@ -90,7 +102,9 @@ export default function ProfileHeader({
                     <input
                       type="text"
                       value={formData.full_name}
-                      onChange={(e) => onInputChange("full_name", e.target.value)}
+                      onChange={(e) =>
+                        onInputChange("full_name", e.target.value)
+                      }
                       className="w-full max-w-xl px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base font-semibold text-gray-900"
                       placeholder="Enter full name"
                     />
@@ -104,7 +118,9 @@ export default function ProfileHeader({
                       <input
                         type="tel"
                         value={formData.phone_no}
-                        onChange={(e) => onInputChange("phone_no", e.target.value)}
+                        onChange={(e) =>
+                          onInputChange("phone_no", e.target.value)
+                        }
                         className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base font-semibold text-gray-900"
                         placeholder="Enter phone number"
                       />
@@ -141,7 +157,9 @@ export default function ProfileHeader({
                     <input
                       type="text"
                       value={formData.location}
-                      onChange={(e) => onInputChange("location", e.target.value)}
+                      onChange={(e) =>
+                        onInputChange("location", e.target.value)
+                      }
                       className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base font-semibold text-gray-900"
                       placeholder="e.g. Andheri West, Mumbai"
                     />

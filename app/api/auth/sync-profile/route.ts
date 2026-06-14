@@ -58,8 +58,9 @@ export async function POST(request: Request) {
       });
     }
 
-    const isPseudoEmail = email && email.startsWith("phone_") && email.endsWith("@kaamao.com");
-    const dbEmail = isPseudoEmail ? null : (email || null);
+    const isPseudoEmail =
+      email && email.startsWith("phone_") && email.endsWith("@kaamao.com");
+    const dbEmail = isPseudoEmail ? null : email || null;
 
     // Insert new profile using service role (bypasses RLS)
     const { error: insertError } = await supabaseAdmin.from("users").insert({

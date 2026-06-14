@@ -65,7 +65,6 @@ export interface UserProfile {
   created_at: string;
 }
 
-
 export interface SignUpResponse {
   success: boolean;
   error?: string;
@@ -152,10 +151,14 @@ export async function signUp(
         };
       }
 
-      if (authError.message.includes("User already registered") || authError.message.includes("email already exists")) {
+      if (
+        authError.message.includes("User already registered") ||
+        authError.message.includes("email already exists")
+      ) {
         return {
           success: false,
-          error: "This phone number or email is already registered. Please login instead.",
+          error:
+            "This phone number or email is already registered. Please login instead.",
         };
       }
 
@@ -336,7 +339,6 @@ export async function getUserProfile(userId: string): Promise<{
   }
 }
 
-
 export async function logClick(
   visitorId: string,
   projectId: string,
@@ -359,7 +361,6 @@ export async function logClick(
     console.error("Supabase analytics logging error:", err);
   }
 }
-
 
 // ==================== API-BASED SIGNUP (Bypasses Rate Limits) ====================
 

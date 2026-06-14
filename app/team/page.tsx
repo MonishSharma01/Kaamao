@@ -184,7 +184,7 @@ function TeamMemberCard({
           : undefined,
       }}
     >
-      <div 
+      <div
         className="w-full h-full bg-white dark:bg-slate-900 rounded-[23px] flex flex-col justify-between overflow-hidden relative z-10 transition-colors duration-300"
         style={{ transform: "translateZ(30px)", transformStyle: "preserve-3d" }}
       >
@@ -202,7 +202,7 @@ function TeamMemberCard({
         />
 
         {/* Profile Image - Optimized size for mobile view responsiveness */}
-        <div 
+        <div
           className="relative w-[120px] h-[120px] sm:w-[140px] sm:h-[140px] mt-6 sm:mt-8 mx-auto rounded-full p-0.5 bg-slate-100 dark:bg-slate-800 group-hover:bg-gradient-to-tr group-hover:from-blue-600 group-hover:to-purple-600 transition-all duration-500 shrink-0 z-10 shadow-md"
           style={{ transform: "translateZ(10px)" }}
         >
@@ -216,7 +216,7 @@ function TeamMemberCard({
         </div>
 
         {/* Name and Role */}
-        <div 
+        <div
           className="flex-grow flex flex-col pt-2 px-4 pb-2 justify-center overflow-hidden relative z-10"
           style={{ transform: "translateZ(15px)" }}
         >
@@ -243,7 +243,10 @@ function TeamMemberCard({
               className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-slate-250/70 dark:border-slate-800 bg-white dark:bg-slate-900 flex items-center justify-center text-slate-400 dark:text-slate-500 hover:bg-slate-900 dark:hover:bg-white hover:text-white dark:hover:text-slate-900 hover:-translate-y-0.5 transition-all duration-200 shadow-sm"
               aria-label="GitHub Profile"
             >
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
+              <svg
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current"
+                viewBox="0 0 24 24"
+              >
                 <path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12" />
               </svg>
             </motion.a>
@@ -257,7 +260,10 @@ function TeamMemberCard({
               className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg border border-blue-100 dark:border-blue-950/60 bg-white dark:bg-slate-900 flex items-center justify-center text-blue-600 dark:text-blue-455 hover:bg-[#0077b5] dark:hover:bg-[#0077b5] hover:text-white dark:hover:text-white hover:-translate-y-0.5 transition-all duration-200 shadow-sm"
               aria-label="LinkedIn Profile"
             >
-              <svg className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current" viewBox="0 0 24 24">
+              <svg
+                className="w-3 h-3 sm:w-3.5 sm:h-3.5 fill-current"
+                viewBox="0 0 24 24"
+              >
                 <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.779-1.75-1.75s.784-1.75 1.75-1.75 1.75.779 1.75 1.75-.784 1.75-1.75 1.75zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
               </svg>
             </motion.a>
@@ -287,8 +293,10 @@ export default function TeamPage() {
 
   useEffect(() => {
     const isDarkTheme = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkTheme);
-    
+    const timer = setTimeout(() => {
+      setIsDark(isDarkTheme);
+    }, 0);
+
     // Set up a MutationObserver to listen to class changes on documentElement (for dark mode changes)
     const observer = new MutationObserver(() => {
       setIsDark(document.documentElement.classList.contains("dark"));
@@ -298,7 +306,10 @@ export default function TeamPage() {
       attributeFilter: ["class"],
     });
 
-    return () => observer.disconnect();
+    return () => {
+      clearTimeout(timer);
+      observer.disconnect();
+    };
   }, []);
 
   const toggleDarkMode = () => {

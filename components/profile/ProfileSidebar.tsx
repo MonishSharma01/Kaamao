@@ -29,7 +29,10 @@ export default function ProfileSidebar({
   // Verification state (Phone is verified if user has phone_no, Email is verified if user has email)
   const verification: VerificationItem[] = [
     { label: "Phone Verified", verified: !!profile.phone_no },
-    { label: "Email Verified", verified: !!profile.email && !profile.email.endsWith("@kaamao.com") },
+    {
+      label: "Email Verified",
+      verified: !!profile.email && !profile.email.endsWith("@kaamao.com"),
+    },
     { label: "ID Verification", verified: false },
     { label: "Background Check", verified: false },
   ];
@@ -51,7 +54,7 @@ export default function ProfileSidebar({
           <User className="w-6 h-6 text-blue-600" />
           Personal Details
         </h3>
-        
+
         {isEditing ? (
           <div className="space-y-4">
             <div>
@@ -86,13 +89,23 @@ export default function ProfileSidebar({
         ) : (
           <div className="space-y-4 text-sm sm:text-base text-gray-700">
             <div className="flex justify-between items-center border-b border-gray-50 pb-2.5">
-              <span className="text-gray-500 font-extrabold uppercase tracking-wider text-[11px] sm:text-xs">Gender</span>
-              <span className="font-extrabold text-gray-900">{profile.gender || "Not specified"}</span>
+              <span className="text-gray-500 font-extrabold uppercase tracking-wider text-[11px] sm:text-xs">
+                Gender
+              </span>
+              <span className="font-extrabold text-gray-900">
+                {profile.gender || "Not specified"}
+              </span>
             </div>
             <div className="flex justify-between items-center pt-1.5">
-              <span className="text-gray-500 font-extrabold uppercase tracking-wider text-[11px] sm:text-xs">Birth Date</span>
+              <span className="text-gray-500 font-extrabold uppercase tracking-wider text-[11px] sm:text-xs">
+                Birth Date
+              </span>
               <span className="font-extrabold text-gray-900">
-                {profile.dob ? new Date(profile.dob).toLocaleDateString(undefined, { dateStyle: "medium" }) : "Not specified"}
+                {profile.dob
+                  ? new Date(profile.dob).toLocaleDateString(undefined, {
+                      dateStyle: "medium",
+                    })
+                  : "Not specified"}
               </span>
             </div>
           </div>

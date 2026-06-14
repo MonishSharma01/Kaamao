@@ -17,19 +17,15 @@ const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const {
-      email,
-      password,
-      fullName,
-      phoneNo,
-      dob,
-      location,
-    } = body;
+    const { email, password, fullName, phoneNo, dob, location } = body;
 
     // Only Name, Phone Number, and Password are strictly required now
     if (!fullName || !phoneNo || !password) {
       return NextResponse.json(
-        { error: "Missing required fields. Name, Phone Number, and Password are required." },
+        {
+          error:
+            "Missing required fields. Name, Phone Number, and Password are required.",
+        },
         { status: 400 },
       );
     }
@@ -74,9 +70,15 @@ export async function POST(request: Request) {
     if (authError) {
       console.error("Auth error:", authError);
 
-      if (authError.message.includes("User already registered") || authError.message.includes("email already exists")) {
+      if (
+        authError.message.includes("User already registered") ||
+        authError.message.includes("email already exists")
+      ) {
         return NextResponse.json(
-          { error: "This phone number or email is already registered. Please login instead." },
+          {
+            error:
+              "This phone number or email is already registered. Please login instead.",
+          },
           { status: 400 },
         );
       }

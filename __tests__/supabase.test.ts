@@ -27,10 +27,7 @@ vi.mock("@supabase/supabase-js", () => {
 });
 
 // Import the module after mocking
-import {
-  isSupabaseConfigured,
-  logClick,
-} from "../lib/supabase";
+import { isSupabaseConfigured, logClick } from "../lib/supabase";
 
 describe("Supabase Client Configuration", () => {
   it("should export isSupabaseConfigured as a boolean", () => {
@@ -46,7 +43,7 @@ describe("logClick", () => {
   it("should log event details and not throw errors", async () => {
     const consoleSpy = vi.spyOn(console, "log");
     await logClick("visitor-123", "test-project", true);
-    
+
     if (isSupabaseConfigured) {
       expect(consoleSpy).toHaveBeenCalledWith("Analytics Event:", {
         visitorId: "visitor-123",

@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, getUserProfile, updateUserProfile, UserProfile } from "@/lib/supabase";
+import {
+  getCurrentUser,
+  getUserProfile,
+  updateUserProfile,
+  UserProfile,
+} from "@/lib/supabase";
 import ProfileSkeleton from "@/components/profile/ProfileSkeleton";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import ProfileDetails from "@/components/profile/ProfileDetails";
@@ -69,7 +74,10 @@ export default function ProfilePage() {
             about: null,
             created_at: new Date().toISOString(),
           };
-          const { success: createSuccess } = await updateUserProfile(user.id, newProfile);
+          const { success: createSuccess } = await updateUserProfile(
+            user.id,
+            newProfile,
+          );
           if (createSuccess) {
             setProfile(newProfile);
             setFormData({
@@ -108,21 +116,29 @@ export default function ProfilePage() {
         const { latitude, longitude } = position.coords;
         try {
           const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
           );
           const data = await response.json();
           if (data && data.address) {
             const addr = data.address;
-            const neighborhood = addr.neighbourhood || addr.suburb || addr.village || addr.residential || "";
+            const neighborhood =
+              addr.neighbourhood ||
+              addr.suburb ||
+              addr.village ||
+              addr.residential ||
+              "";
             const city = addr.city || addr.town || addr.state_district || "";
             const postcode = addr.postcode || "";
             const parts = [neighborhood, city, postcode].filter(Boolean);
-            const locationStr = parts.length > 0 ? parts.join(", ") : data.display_name;
+            const locationStr =
+              parts.length > 0 ? parts.join(", ") : data.display_name;
             handleInputChange("location", locationStr);
           }
         } catch (err) {
           console.error("GPS Reverse Geocoding Error:", err);
-          alert("Could not retrieve clean location details. Please fill it manually.");
+          alert(
+            "Could not retrieve clean location details. Please fill it manually.",
+          );
         } finally {
           setIsLocating(false);
         }
@@ -131,7 +147,7 @@ export default function ProfilePage() {
         console.error("GPS Coordinates Error:", error);
         alert(`Failed to fetch coordinates: ${error.message}`);
         setIsLocating(false);
-      }
+      },
     );
   };
 
@@ -194,7 +210,9 @@ export default function ProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center p-6 bg-white rounded-2xl shadow-xl border border-gray-100 max-w-sm">
-          <p className="text-gray-600 font-medium mb-4">Could not load your profile details.</p>
+          <p className="text-gray-600 font-medium mb-4">
+            Could not load your profile details.
+          </p>
           <button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-semibold"

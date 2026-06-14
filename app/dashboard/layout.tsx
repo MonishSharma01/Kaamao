@@ -235,7 +235,7 @@ export default function DashboardLayout({
         const { getCurrentUser } = await import("@/lib/supabase");
         const result = await getCurrentUser();
         const user = result.user as User | null;
-        const session = result.session as any;
+        const session = result.session as { access_token?: string } | null;
 
         if (!user) {
           router.push("/login");

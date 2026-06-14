@@ -48,7 +48,10 @@ export default function ProfileSkeleton() {
           <div className="space-y-6">
             {/* Expanded Sidebar Cards Skeleton */}
             {Array.from({ length: 2 }).map((_, idx) => (
-              <div key={idx} className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 space-y-4 border border-gray-100/50">
+              <div
+                key={idx}
+                className="bg-white rounded-3xl shadow-2xl p-6 sm:p-8 space-y-4 border border-gray-100/50"
+              >
                 <div className="h-6 bg-gray-200 rounded-md w-1/3" />
                 <div className="space-y-3">
                   <div className="h-5 bg-gray-200 rounded-md w-full" />

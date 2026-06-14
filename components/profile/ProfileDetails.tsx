@@ -52,7 +52,7 @@ export default function ProfileDetails({
           <User className="w-6 h-6 text-blue-600" />
           About Me
         </h3>
-        
+
         {isEditing ? (
           <div className="space-y-2">
             <textarea
@@ -72,7 +72,8 @@ export default function ProfileDetails({
             )}
             {profile.location ? `Based in ${profile.location}. ` : ""}
             {profile.dob || profile.location ? "\n\n" : ""}
-            {profile.about || "No details provided yet. Add information about yourself by clicking Edit Profile above."}
+            {profile.about ||
+              "No details provided yet. Add information about yourself by clicking Edit Profile above."}
           </p>
         )}
       </motion.div>
