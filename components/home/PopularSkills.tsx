@@ -6,21 +6,21 @@ import Icon from "../Icon";
 
 const SKILLS = [
   {
-    image: "/assets/tutoring.png",
+    image: "/assets/home_page_images/tutoring.png",
     chip: "TUTORING",
     title: "Academic Support",
     desc: "From math wizards to language experts right in your block.",
     count: "Experts",
   },
   {
-    image: "/assets/cooking.png",
+    image: "/assets/home_page_images/cooking.png",
     chip: "COOKING",
     title: "Home Chefs",
     desc: "Healthy, home-cooked meals or culinary lessons from neighbors.",
     count: "Cooks",
   },
   {
-    image: "/assets/sewing.png",
+    image: "/assets/home_page_images/sewing.png",
     chip: "SEWING",
     title: "Tailoring & Crafts",
     desc: "Quick repairs, custom clothing, or textile workshops nearby.",

@@ -29,7 +29,7 @@ export default function TrustSection({
         >
           <div className="rounded-[32px] overflow-hidden h-[440px] w-full shadow-2xl relative border-4 border-slate-50 dark:border-slate-800">
             <img
-              src="/assets/trust-neighbors.png"
+              src="/assets/home_page_images/trust-neighbors.png"
               alt="Community trust"
               className="w-full h-full object-cover"
             />

@@ -12,22 +12,22 @@ interface HeroProps {
 
 const SLIDES = [
   {
-    src: "/assets/hero-slide-1.png",
+    src: "/assets/home_page_images/hero-slide-1.png",
     label: "Freelancers working flexibly",
     tag: "Discover local skills",
   },
   {
-    src: "/assets/hero-slide-2.png",
+    src: "/assets/home_page_images/hero-slide-2.png",
     label: "Tutors teaching locally",
     tag: "Trusted experts",
   },
   {
-    src: "/assets/hero-slide-3.png",
+    src: "/assets/home_page_images/hero-slide-3.png",
     label: "Home chefs sharing skills",
     tag: "Home chefs",
   },
   {
-    src: "/assets/hero-slide-4.png",
+    src: "/assets/home_page_images/hero-slide-4.png",
     label: "Community connections",
     tag: "Community trust",
   },
