@@ -56,13 +56,49 @@ export function EditServiceModal({
     service.contact_numbers || []
   );
 
+  // Validate phone number - exactly 10 digits, numbers only
+  const validatePhoneNumber = (value: string): boolean => {
+    const cleanValue = value.replace(/\D/g, "");
+    return cleanValue.length === 10;
+  };
+
+  // Clean phone number to only digits
+  const cleanPhoneNumber = (value: string): string => {
+    return value.replace(/\D/g, "");
+  };
+
+  const handleContactChange = (index: number, value: string) => {
+    // Only allow numbers
+    const digitsOnly = value.replace(/\D/g, "");
+    
+    // Limit to 10 digits
+    const limitedDigits = digitsOnly.slice(0, 10);
+    
+    const updated = [...contactNumbers];
+    updated[index] = limitedDigits;
+    setContactNumbers(updated);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const cleanContacts = contactNumbers.map((n) => n.trim()).filter(Boolean);
-    if (cleanContacts.length === 0) {
-      alert("At least one contact number is required.");
+    
+    // Clean all contact numbers
+    const cleanContacts = contactNumbers
+      .map((n) => cleanPhoneNumber(n))
+      .filter(Boolean);
+
+    // Validate each contact number
+    const invalidNumbers = cleanContacts.filter((num) => num.length !== 10);
+    if (invalidNumbers.length > 0) {
+      alert(`Invalid phone number(s): ${invalidNumbers.join(", ")}. Please enter exactly 10 digits.`);
       return;
     }
+
+    if (cleanContacts.length === 0) {
+      alert("At least one valid contact number is required.");
+      return;
+    }
+
     onSave({
       title,
       description,
@@ -164,33 +200,57 @@ export function EditServiceModal({
             <div>
               <label className="text-xs font-bold text-slate-500 uppercase block mb-1">
                 Contact Numbers
+                <span className="text-red-500 ml-1">*</span>
+                <span className="text-[10px] font-normal text-slate-400 ml-2">
+                  (Enter exactly 10 digits)
+                </span>
               </label>
               <div className="space-y-2">
-                {contactNumbers.map((num, idx) => (
-                  <div key={idx} className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      required
-                      value={num}
-                      onChange={(e) => {
-                        const updated = [...contactNumbers];
-                        updated[idx] = e.target.value;
-                        setContactNumbers(updated);
-                      }}
-                      className="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-800 transition-all"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const updated = contactNumbers.filter((_, i) => i !== idx);
-                        setContactNumbers(updated);
-                      }}
-                      className="px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-650 rounded-xl text-xs font-bold transition-colors cursor-pointer"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
+                {contactNumbers.map((num, idx) => {
+                  const isValid = num.length === 10;
+                  const isComplete = num.length > 0;
+                  
+                  return (
+                    <div key={idx} className="flex items-center gap-2">
+                      <div className="flex-1 relative">
+                        <input
+                          type="text"
+                          required
+                          value={num}
+                          onChange={(e) => handleContactChange(idx, e.target.value)}
+                          placeholder="Enter 10-digit phone number"
+                          className={`w-full px-4 py-2.5 bg-white border rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-slate-800 transition-all ${
+                            isComplete && !isValid
+                              ? "border-red-400 focus:border-red-500 focus:ring-red-500/20"
+                              : isValid
+                              ? "border-green-400 focus:border-green-500 focus:ring-green-500/20"
+                              : "border-slate-200"
+                          }`}
+                        />
+                        {isComplete && isValid && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-xs font-bold">
+                            ✓
+                          </span>
+                        )}
+                        {isComplete && !isValid && (
+                          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-red-500 text-[10px] font-bold">
+                            Need 10 digits
+                          </span>
+                        )}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const updated = contactNumbers.filter((_, i) => i !== idx);
+                          setContactNumbers(updated);
+                        }}
+                        className="px-3 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-colors cursor-pointer"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  );
+                })}
                 <button
                   type="button"
                   onClick={() => setContactNumbers([...contactNumbers, ""])}
@@ -198,6 +258,9 @@ export function EditServiceModal({
                 >
                   + Add Contact Number
                 </button>
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Enter up to 10 digits (numbers only). Example: 9876543210
+                </p>
               </div>
             </div>
 
