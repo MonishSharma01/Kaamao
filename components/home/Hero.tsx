@@ -82,48 +82,6 @@ export default function Hero({ onShowToast }: HeroProps) {
             their talent and customers connect with local experts directly.
           </p>
 
-          {/* Search bar */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.6 }}
-            className="flex flex-col sm:flex-row items-stretch gap-2 p-2 mb-8 bg-white dark:bg-slate-800 rounded-2xl shadow-xl shadow-blue-500/5 border border-slate-100 dark:border-slate-700 max-w-[560px]"
-          >
-            <div className="flex flex-1 items-center gap-2 px-3 py-2.5 border-b sm:border-b-0 sm:border-r border-slate-100 dark:border-slate-700">
-              <Icon
-                name="search"
-                className="text-xl text-slate-400 dark:text-slate-500 shrink-0"
-              />
-              <input
-                value={skill}
-                onChange={(e) => setSkill(e.target.value)}
-                placeholder="What skill do you need?"
-                className="w-full bg-transparent outline-none text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                suppressHydrationWarning
-              />
-            </div>
-            <div className="flex flex-1 items-center gap-2 px-3 py-2.5">
-              <Icon
-                name="location_on"
-                className="text-xl text-slate-400 dark:text-slate-500 shrink-0"
-              />
-              <input
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Near your neighborhood"
-                className="w-full bg-transparent outline-none text-sm text-slate-700 dark:text-slate-200 placeholder:text-slate-400 dark:placeholder:text-slate-500"
-                suppressHydrationWarning
-              />
-            </div>
-            <button
-              onClick={() => onShowToast("Search functionality coming soon...")}
-              className="shrink-0 text-white bg-brand-primary font-bold text-sm px-8 py-3 sm:py-0 rounded-xl hover:opacity-95 active:scale-95 transition-all cursor-pointer shadow-lg shadow-blue-500/20"
-              suppressHydrationWarning
-            >
-              Search
-            </button>
-          </motion.div>
-
           {/* Quick buttons */}
           <div className="flex flex-wrap items-center gap-4 mb-8">
             <Link

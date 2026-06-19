@@ -2,85 +2,150 @@
 
 import React from "react";
 import Link from "next/link";
+import { Share2 } from "lucide-react";
+import {
+  FaInstagram,
+  FaTwitter,
+  FaYoutube,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import Icon from "../Icon";
 
 interface FooterProps {
   onShowToast: (msg: string) => void;
 }
 
+// Social links - easily updateable
+const SOCIAL_LINKS = {
+  instagram: "#",
+  twitter: "#",
+  youtube: "#",
+  linkedin: "#",
+};
+
 export default function Footer({ onShowToast }: FooterProps) {
   const currentYear = new Date().getFullYear();
 
+  const handleShare = async () => {
+    const shareData = {
+      title: "Kaamao - Find Trusted Local Service Providers",
+      text: "Discover verified tutors, cooks, babysitters, and skilled professionals near you on Kaamao!",
+      url: typeof window !== "undefined" ? window.location.origin : "https://kaamao.com",
+    };
+
+    if (navigator.share) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.log("Share cancelled or failed:", err);
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareData.url);
+        onShowToast("Link copied to clipboard! Share it with your friends.");
+      } catch (err) {
+        console.error("Failed to copy link:", err);
+        onShowToast("Share failed. Please try again.");
+      }
+    }
+  };
+
   return (
-    <footer className="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 py-8 transition-colors duration-300">
-      <div className="mx-auto max-w-[1140px] px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        {/* Left */}
-        <div className="text-center md:text-left">
-          <Link
-            href="/"
-            className="flex items-center justify-center md:justify-start gap-2 mb-2"
-          >
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-brand-primary">
-              <Icon name="check" fill className="text-xs text-white" />
+    <footer className="bg-white dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800 py-12 transition-colors duration-300">
+      <div className="mx-auto max-w-[1140px] px-6">
+        <div className="grid md:grid-cols-2 gap-8">
+          {/* Left - Brand */}
+          <div>
+            <Link href="/" className="flex items-center gap-2 mb-4">
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-blue-600">
+                <Icon name="check" fill className="text-xs text-white" />
+              </div>
+              <span className="text-lg font-bold text-slate-800 dark:text-white">
+                Kaamao
+              </span>
+            </Link>
+            <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed max-w">
+              Discover trusted local professionals and skilled workers near you.
+            </p>
+            <div className="flex items-center gap-3 mt-4">
+              <button
+                onClick={handleShare}
+                className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-all hover:scale-105 active:scale-95 shadow-md shadow-blue-500/20 cursor-pointer"
+                aria-label="Share Kaamao"
+              >
+                <Share2 className="h-4 w-4" />
+              </button>
+              <a
+                href={SOCIAL_LINKS.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="Instagram"
+              >
+                <FaInstagram className="h-4 w-4" />
+              </a>
+              <a
+                href={SOCIAL_LINKS.twitter}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="Twitter"
+              >
+                <FaTwitter className="h-4 w-4" />
+              </a>
+              <a
+                href={SOCIAL_LINKS.youtube}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="YouTube"
+              >
+                <FaYoutube className="h-4 w-4" />
+              </a>
+              <a
+                href={SOCIAL_LINKS.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+                aria-label="LinkedIn"
+              >
+                <FaLinkedinIn className="h-4 w-4" />
+              </a>
             </div>
-            <span className="text-sm font-bold text-slate-800 dark:text-white">
-              Kaamao
-            </span>
-          </Link>
-          <p className="text-[12px] text-slate-400 dark:text-slate-500">
-            &copy; {currentYear} Kaamao. Transforming skills into opportunities.
+          </div>
+
+          {/* Right - Quick Links */}
+          <div className="flex flex-col items-start md:items-end">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-3">
+              Quick Links
+            </h4>
+            <ul className="space-y-2.5 text-right">
+              {/* Privacy Policy - Static text, not clickable */}
+              <li className="text-sm text-slate-600 dark:text-slate-400">
+                Privacy Policy
+              </li>
+              {/* Terms of Service - Static text, not clickable */}
+              <li className="text-sm text-slate-600 dark:text-slate-400">
+                Terms of Service
+              </li>
+              {/* Our Team - Working link */}
+              <li>
+                <Link
+                  href="/team"
+                  className="text-sm text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  Our Team
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-slate-100 dark:border-slate-800 mt-8 pt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            &copy; {currentYear} Kaamao • Mumbai, India
           </p>
-        </div>
-
-        {/* Center links */}
-        <div className="flex flex-wrap items-center justify-center gap-6">
-          {[
-            "Privacy Policy",
-            "Terms of Service",
-            "Help Center",
-            "Community Guidelines",
-          ].map((l) => (
-            <button
-              key={l}
-              onClick={() => onShowToast("Coming soon...")}
-              className="text-[12px] text-slate-500 dark:text-slate-400 hover:text-brand-primary dark:hover:text-brand-primary transition-colors cursor-pointer"
-              suppressHydrationWarning
-            >
-              {l}
-            </button>
-          ))}
-          <Link
-            href="/team"
-            className="text-[12px] text-slate-500 dark:text-slate-400 hover:text-brand-primary dark:hover:text-brand-primary transition-colors font-semibold"
-          >
-            Our Team
-          </Link>
-        </div>
-
-        {/* Right icons */}
-        <div className="flex items-center justify-center gap-3">
-          <button
-            onClick={() => onShowToast("Share coming soon...")}
-            className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-850 hover:text-brand-primary hover:border-brand-primary-light transition-all cursor-pointer"
-            aria-label="Share"
-            suppressHydrationWarning
-          >
-            <Icon
-              name="share"
-              className="text-base text-slate-500 dark:text-slate-400"
-            />
-          </button>
-          <button
-            onClick={() => onShowToast("Language settings coming soon...")}
-            className="w-9 h-9 rounded-full border border-slate-200 dark:border-slate-800 flex items-center justify-center hover:bg-slate-50 dark:hover:bg-slate-850 hover:text-brand-primary hover:border-brand-primary-light transition-all cursor-pointer"
-            aria-label="Select Language"
-            suppressHydrationWarning
-          >
-            <Icon
-              name="language"
-              className="text-base text-slate-500 dark:text-slate-400"
-            />
-          </button>
         </div>
       </div>
     </footer>
