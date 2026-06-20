@@ -1,210 +1,80 @@
-# Pre-Push Checklist — Kaamao
+# CI/CD Pipeline Commands Reference
 
-Run every command in this checklist **before pushing to `main`** or opening a PR.
-All checks must pass with zero errors. ✅
-
----
-
-## Quick Run (copy-paste all at once)
-
-```bash
-npm run format:check && npm run lint && npm run typecheck && npm run test && npm run build
-```
-
-If that green-lines all the way through, you're good to push.
+This document details the essential commands used in our GitHub Actions CI/CD pipeline. Running these commands locally before pushing or opening a pull request will ensure your branch passes all checks.
 
 ---
 
-## Step-by-Step
+## 1. Code Quality & Verification
 
-### 1 · Format Check
-
+### Code Formatting (Prettier)
+Check if all files match formatting guidelines:
 ```bash
 npm run format:check
 ```
-
-**Passes when:** No output (exit 0)  
-**Fails when:** Lists files that need formatting  
-**Fix:**
-
+Automatically fix all formatting issues:
 ```bash
 npm run format:write
 ```
 
----
-
-### 2 · Lint
-
+### Linting (ESLint)
+Verify there are no syntax, style, or React-specific best-practice violations:
 ```bash
 npm run lint
 ```
 
-**Passes when:** No ESLint errors or warnings  
-**Fails when:** Lists rule violations  
-**Fix:** Address each violation, or suppress with `// eslint-disable-next-line <rule>` if intentional
-
----
-
-### 3 · Type Check
-
+### TypeScript Type Checking
+Run the TypeScript compiler to ensure code compiles and matches types:
 ```bash
 npm run typecheck
 ```
 
-**Passes when:** No output (exit 0)  
-**Fails when:** Lists TypeScript errors  
-**Fix:** Resolve all type errors before pushing — type errors in CI will block the build
-
 ---
 
-### 4 · Unit Tests
+## 2. Unit Testing & Coverage
 
+### Run Unit Tests
+Run the Vitest test suite once:
 ```bash
 npm run test
 ```
 
-**Passes when:**
-
-```
-Test Files  X passed
-     Tests  X passed
-```
-
-**Fails when:** Any test file shows `FAIL`  
-**Fix:** Read the failing test output and fix the underlying code or test
-
-#### Run a single test file
-
-```bash
-npx vitest run __tests__/api-likes.test.ts
-```
-
-#### Run in watch mode (during active development)
-
+### Run Tests in Watch Mode
+Run Vitest in interactive watch mode for active development:
 ```bash
 npm run test:watch
 ```
 
----
-
-### 5 · Build
-
+### Run Tests with Coverage Check
+Generate coverage reports and verify against the configured thresholds (e.g., 15% lines/functions/statements, 10% branches):
 ```bash
-npm run build
+npx vitest run --coverage
 ```
-
-**Passes when:** Ends with `✓ Compiled successfully`  
-**Fails when:** Build errors (usually TypeScript or import issues not caught by `typecheck`)  
-**Note:** The build uses mock Supabase env vars locally — set them if your `next.config.ts` requires real values:
-
-```bash
-$env:NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
-$env:NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
-npm run build
-```
+> [!NOTE]
+> The `@vitest/coverage-v8` package is required to run coverage checks. If missing locally, install it via:
+> `npm install --save-dev @vitest/coverage-v8`
 
 ---
 
-### 6 · Security Audit (recommended before major releases)
+## 3. Dependency Security Audits
 
+### Scan for High & Critical Vulnerabilities
+Audit the project's dependencies for security vulnerabilities at or above `high` severity level (this is the check executed in the CI workflow):
 ```bash
 npm audit --audit-level=high
 ```
 
-**Passes when:** No high or critical vulnerabilities  
-**Fails when:** Lists high/critical CVEs  
-**Fix:**
-
+### Fix Vulnerabilities
+Automatically resolve vulnerabilities by updating dependency versions within safe semver constraints:
 ```bash
 npm audit fix
 ```
 
-> Use `npm audit fix --force` only if you understand the breaking changes
-
 ---
 
-### 7 · E2E Tests (optional locally, required in CI)
+## 4. Production Build Verification
 
-Requires a running dev server in another terminal:
-
-**Terminal 1:**
-
+### Local Build Simulation
+Run the production build worker to test compilation, asset optimization, and pages generation:
 ```bash
-npm run dev
+npm run build
 ```
-
-**Terminal 2:**
-
-```bash
-npm run test:e2e
-```
-
-**Passes when:** All Playwright tests pass  
-**Skip locally** if you haven't changed routing, auth, or page-level behavior — CI will catch it on push
-
----
-
-## Rate Limit Quick Test
-
-After starting `npm run dev`, test that rate limiting works:
-
-```bash
-# Should return 200 on first calls, 429 after 5 within 15 minutes
-for ($i=0; $i -lt 7; $i++) {
-  Invoke-WebRequest -Uri "http://localhost:3000/api/auth/signup" `
-    -Method POST `
-    -ContentType "application/json" `
-    -Body '{"fullName":"Test","phoneNo":"9999999999","password":"test1234"}' `
-    -ErrorAction SilentlyContinue | Select-Object -ExpandProperty StatusCode
-}
-```
-
-Expected: `200` (or `400`) for first 5 calls, `429` for calls 6+
-
----
-
-## Security Headers Quick Test
-
-After starting `npm run dev`, check that headers are present:
-
-```bash
-Invoke-WebRequest -Uri "http://localhost:3000" -Method HEAD | Select-Object -ExpandProperty Headers
-```
-
-You should see:
-
-- `X-Frame-Options: DENY`
-- `X-Content-Type-Options: nosniff`
-- `Referrer-Policy: strict-origin-when-cross-origin`
-
----
-
-## Common Issues & Fixes
-
-| Error                            | Cause                                  | Fix                                    |
-| -------------------------------- | -------------------------------------- | -------------------------------------- |
-| `Cannot find module 'zod'`       | Zod not installed                      | `npm install`                          |
-| `tsc: error TS2307`              | Missing type                           | Add type or install `@types/...`       |
-| `ESLint: Parsing error`          | Syntax issue                           | Fix the syntax                         |
-| `Build: Module not found`        | Wrong import path                      | Check relative/absolute path           |
-| `Vitest: vi.mock hoisting error` | Top-level `const` used in mock factory | Declare mocks inside `vi.hoisted()`    |
-| `429 not working`                | Rate limiter resets on restart         | Expected in dev — uses in-memory store |
-
----
-
-## Branch Strategy
-
-| Branch            | CI Required   | Direct Push |
-| ----------------- | ------------- | ----------- |
-| `main` / `master` | ✅ All checks | ❌ PR only  |
-| `dev`             | ✅ All checks | ✅ OK       |
-| `feature/*`       | Runs on PR    | ✅ OK       |
-
----
-
-> **Tip:** Add a git pre-push hook to automate this locally:
->
-> ```bash
-> # .git/hooks/pre-push (make executable with chmod +x)
-> npm run lint && npm run typecheck && npm run test
-> ```
