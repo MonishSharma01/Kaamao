@@ -401,8 +401,6 @@ export default function ServicesPage() {
     }
   };
 
-
-
   // Pagination Logic
   const totalPages = Math.max(
     1,
