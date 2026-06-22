@@ -216,7 +216,7 @@ export default function ServicesPage() {
               const { latitude, longitude } = position.coords;
               try {
                 const geoRes = await fetch(
-                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
+                  `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
                 );
                 if (!geoRes.ok) throw new Error();
                 const geoData = await geoRes.json();
@@ -238,7 +238,7 @@ export default function ServicesPage() {
             () => {
               showToast("Location access denied. Please type manually.");
               resolve();
-            }
+            },
           );
         });
       } else {
