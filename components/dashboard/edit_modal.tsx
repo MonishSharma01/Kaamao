@@ -291,7 +291,9 @@ export function EditServiceModal({
                 Danger Zone
               </span>
               <p className="text-[11px] text-slate-500 mb-3 leading-relaxed font-medium">
-                Deleting this service is permanent and cannot be undone. All reviews, likes, and performance analytics will be permanently removed.
+                Deleting this service is permanent and cannot be undone. All
+                reviews, likes, and performance analytics will be permanently
+                removed.
               </p>
               <button
                 type="button"
@@ -346,7 +348,10 @@ export function EditServiceModal({
                   Delete Service Listing?
                 </h4>
                 <p className="text-xs text-slate-500 leading-relaxed font-medium">
-                  Are you sure you want to permanently delete <strong>{service.title}</strong>? This will delete all student reviews, user likes, page views, and performance analytics. This action cannot be undone.
+                  Are you sure you want to permanently delete{" "}
+                  <strong>{service.title}</strong>? This will delete all student
+                  reviews, user likes, page views, and performance analytics.
+                  This action cannot be undone.
                 </p>
               </div>
               <div className="flex gap-2.5 pt-2">

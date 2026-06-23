@@ -71,9 +71,15 @@ export default function DashboardPage() {
     null,
   );
   const [isSaving, setIsSaving] = useState(false);
-  const [toast, setToast] = useState<{ message: string; type: "success" | "error" } | null>(null);
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error";
+  } | null>(null);
 
-  const showToast = (message: string, type: "success" | "error" = "success") => {
+  const showToast = (
+    message: string,
+    type: "success" | "error" = "success",
+  ) => {
     setToast({ message, type });
     setTimeout(() => {
       setToast(null);
@@ -184,7 +190,10 @@ export default function DashboardPage() {
       showToast("Service listing updated successfully!", "success");
     } catch (err) {
       console.error("Failed to update service:", err);
-      showToast(err instanceof Error ? err.message : "Failed to update service.", "error");
+      showToast(
+        err instanceof Error ? err.message : "Failed to update service.",
+        "error",
+      );
     } finally {
       setIsSaving(false);
     }
@@ -230,7 +239,10 @@ export default function DashboardPage() {
       showToast("Service listing deleted successfully!", "success");
     } catch (err) {
       console.error("Failed to delete service:", err);
-      showToast(err instanceof Error ? err.message : "Failed to delete service.", "error");
+      showToast(
+        err instanceof Error ? err.message : "Failed to delete service.",
+        "error",
+      );
     } finally {
       setIsSaving(false);
     }
