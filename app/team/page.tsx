@@ -120,11 +120,14 @@ function TeamMemberImage({
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={name}
+      width={400}
+      height={400}
       onError={() => setHasError(true)}
       className="w-full h-full object-cover transition-transform duration-[800ms] ease-[cubic-bezier(0.23,1,0.32,1)] group-hover:scale-110"
+      unoptimized={src.startsWith("/assets/")}
     />
   );
 }
@@ -526,7 +529,12 @@ export default function TeamPage() {
             Our Mission
           </h3>
           <p className="text-2xl sm:text-3xl md:text-4xl leading-snug font-medium italic max-w-4xl mx-auto text-slate-100 tracking-wide font-['Playfair_Display',serif]">
-            &ldquo;"GullyGig is dedicated to building a community-centric ecosystem. Our core mission is threefold: to deliver essential products and services directly to nearby customers, to empower individuals by creating sustainable streams of extra income, and to provide a vibrant platform where local talent can be recognized and celebrated."&rdquo;
+            GullyGig is dedicated to building a community-centric ecosystem. Our
+            core mission is threefold: to deliver essential products and
+            services directly to nearby customers, to empower individuals by
+            creating sustainable streams of extra income, and to provide a
+            vibrant platform where local talent can be recognized and
+            celebrated.
           </p>
         </motion.div>
       </main>
