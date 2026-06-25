@@ -23,7 +23,7 @@ export default function Home() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const hasDarkClass = document.documentElement.classList.contains("dark");
-    
+
     let activeDark = false;
     if (savedTheme === "dark") {
       activeDark = true;
@@ -34,7 +34,8 @@ export default function Home() {
     } else {
       activeDark = hasDarkClass;
     }
-    
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDarkMode(activeDark);
 
     const observer = new MutationObserver(() => {
@@ -77,23 +78,12 @@ export default function Home() {
     }
   }, [toast]);
 
-  // Smooth scroll to section
-  const scrollToSection = (sectionId: string) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-  };
-
   return (
     <div
       className={`min-h-screen font-[Manrope,sans-serif] text-slate-800 dark:text-slate-100 bg-slate-50 dark:bg-slate-950 selection:bg-brand-primary-light selection:text-brand-primary-dark transition-colors duration-300 ${darkMode ? "dark" : ""}`}
     >
       {/* HEADER */}
-      <Navbar
-        darkMode={darkMode}
-        onToggleDarkMode={toggleDarkMode}
-      />
+      <Navbar darkMode={darkMode} onToggleDarkMode={toggleDarkMode} />
 
       {/* MAIN CONTENT */}
       <main>

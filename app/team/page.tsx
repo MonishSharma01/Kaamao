@@ -343,7 +343,7 @@ export default function TeamPage() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const hasDarkClass = document.documentElement.classList.contains("dark");
-    
+
     let activeDark = false;
     if (savedTheme === "dark") {
       activeDark = true;
@@ -354,7 +354,8 @@ export default function TeamPage() {
     } else {
       activeDark = hasDarkClass;
     }
-    
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(activeDark);
 
     const observer = new MutationObserver(() => {

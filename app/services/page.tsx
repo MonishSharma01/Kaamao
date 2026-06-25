@@ -7,7 +7,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Search,
   MapPin,
-  Phone,
   ExternalLink,
   Share2,
   Heart,
@@ -138,7 +137,7 @@ export default function ServicesPage() {
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     const hasDarkClass = document.documentElement.classList.contains("dark");
-    
+
     let activeDark = false;
     if (savedTheme === "dark") {
       activeDark = true;
@@ -149,7 +148,8 @@ export default function ServicesPage() {
     } else {
       activeDark = hasDarkClass;
     }
-    
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDark(activeDark);
 
     const observer = new MutationObserver(() => {
@@ -660,7 +660,10 @@ export default function ServicesPage() {
 
         {/* 1-Column Service Listing (UI Improved & Height Slightly Decreased) */}
         {!loading && !error && currentServicesList.length > 0 && (
-          <div id="services-list" className="flex flex-col gap-5 max-w-4xl mx-auto">
+          <div
+            id="services-list"
+            className="flex flex-col gap-5 max-w-4xl mx-auto"
+          >
             {currentServicesList.map((service) => {
               const contacts = service.contact_numbers || [];
               const phoneFallback = service.users?.phone_no;
