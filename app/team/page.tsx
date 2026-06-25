@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   motion,
   useMotionValue,
@@ -389,8 +390,14 @@ export default function TeamPage() {
       <header className="sticky top-0 z-50 bg-white/70 dark:bg-[#0B1120]/70 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 transition-colors duration-500">
         <div className="mx-auto flex h-20 max-w-[1400px] items-center justify-between px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3 group">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 group-hover:scale-105 transition-transform duration-300">
-              <Icon name="check" fill className="text-sm text-white" />
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shadow-lg shadow-blue-600/20 group-hover:scale-105 transition-transform duration-300">
+              <Image
+                src="/logo.png"
+                alt="GullyGig Logo"
+                width={40}
+                height={40}
+                className="object-contain"
+              />
             </div>
             <span className="font-extrabold text-slate-900 dark:text-white text-xl tracking-tight">
               GullyGig
@@ -439,7 +446,14 @@ export default function TeamPage() {
             </span>
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-extrabold text-slate-900 dark:text-white leading-[1.1] tracking-tight">
               Meet the Team <br /> behind{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 relative">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400 relative inline-flex items-center gap-2">
+                <Image
+                  src="/logo.png"
+                  alt="GullyGig Logo"
+                  width={48}
+                  height={48}
+                  className="inline-block object-contain w-12 h-12 md:w-16 md:h-16 align-middle"
+                />
                 GullyGig
                 <svg
                   className="absolute w-full h-3 -bottom-1 left-0 text-blue-500/30 dark:text-blue-400/30"
@@ -512,9 +526,7 @@ export default function TeamPage() {
             Our Mission
           </h3>
           <p className="text-2xl sm:text-3xl md:text-4xl leading-snug font-medium italic max-w-4xl mx-auto text-slate-100 tracking-wide font-['Playfair_Display',serif]">
-            &ldquo;GullyGig transforms skills into opportunities and local
-            talent into sustainable income, bringing neighborhoods closer
-            together through trusted professional networks.&rdquo;
+            &ldquo;"GullyGig is dedicated to building a community-centric ecosystem. Our core mission is threefold: to deliver essential products and services directly to nearby customers, to empower individuals by creating sustainable streams of extra income, and to provide a vibrant platform where local talent can be recognized and celebrated."&rdquo;
           </p>
         </motion.div>
       </main>
